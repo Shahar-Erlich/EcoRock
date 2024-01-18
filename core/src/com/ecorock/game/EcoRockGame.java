@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -23,19 +24,18 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Iterator;
 
 public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
-	private Music bgm;
 	private Sound sound1,sound2,sound3,sound4;
-	private SpriteBatch batch;
-	private Texture texture;
-	private Array<Rectangle> dog;
-	private OrthographicCamera camera;
 	Stage stage;
-	static int x=0;
+	private Array<Rectangle> notes;
+	private long lastNoteTime;
+	private SpriteBatch batch;
 
 
 	@Override
@@ -61,22 +61,28 @@ public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
 		stage.addActor(group);
 
 		touch1.setPosition(0,150);
-		touch1.setSize(300,300);
-		touch1.setBounds(0,150,300,300);
+		touch1.setSize(200,200);
+		touch1.setBounds(0,150,200,200);
 		touch2.setPosition(300,150);
-		touch2.setSize(300,300);
-		touch2.setBounds(300,150,300,300);
+		touch2.setSize(200,200);
+		touch2.setBounds(300,150,200,200);
 		touch3.setPosition(600,150);
-		touch3.setSize(300,300);
-		touch3.setBounds(600,150,300,300);
+		touch3.setSize(200,200);
+		touch3.setBounds(600,150,200,200);
 		touch4.setPosition(900,150);
-		touch4.setSize(300,300);
-		touch4.setBounds(900,150,300,300);
+		touch4.setSize(200,200);
+		touch4.setBounds(900,150,200,200);
+
+
 		Gdx.input.setInputProcessor(this);
 		sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
 		sound2 = Gdx.audio.newSound(Gdx.files.internal("guitar.mp3"));
 		sound3 = Gdx.audio.newSound(Gdx.files.internal("ding.mp3"));
 		sound4 = Gdx.audio.newSound(Gdx.files.internal("ping.mp3"));
+		batch = new SpriteBatch();
+		notes = new Array<Rectangle>();
+		spawnNote();
+
 //		actor.addListener(new InputListener() {
 //			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 //				sound1.play();
@@ -93,11 +99,37 @@ public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 		stage.act();
 		stage.draw();
+
+		if(TimeUtils.nanoTime() - lastNoteTime > 1000000000) spawnNote();
+		for (Iterator<Rectangle> iter = notes.iterator(); iter.hasNext(); ) {
+			Rectangle note = iter.next();
+			note.y -= 200 * Gdx.graphics.getDeltaTime();
+			if(note.y + 64 < 0) iter.remove();
+		}
+		batch.begin();
+		for(Rectangle raindrop: notes) {
+			batch.draw(new Texture(Gdx.files.internal("dog.png")), raindrop.x, raindrop.y,64,128);
+		}
+		batch.end();
+
 	}
 	
 	@Override
 	public void dispose () {
-
+	stage.dispose();
+	sound1.dispose();
+	sound2.dispose();
+	sound3.dispose();
+	sound4.dispose();
+	}
+	private void spawnNote() {
+		Rectangle note = new Rectangle();
+		note.x = MathUtils.random();
+		note.y = Gdx.graphics.getHeight();
+		note.width = 64;
+		note.height = 128;
+		notes.add(note);
+		lastNoteTime = TimeUtils.nanoTime();
 	}
 	@Override
 	public boolean keyDown(int keycode) {
@@ -118,27 +150,25 @@ public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
 		Actor hitButton = stage.hit(coord.x,coord.y,true);
+		Gdx.app.log("MyTag", coord.toString());
 		if(hitButton!=null) {
 			switch (hitButton.getName()) {
 				case "t1":
 					sound1.play();
-					Gdx.app.log("MyTag", "1");
-					return false;
+					break;
 			case "t2":
 				sound2.play();
-				Gdx.app.log("MyTag", "2");
-				return false;
+				break;
 			case "t3":
 				sound3.play();
-				Gdx.app.log("MyTag", "3");
-				return false;
+				break;
 			case "t4":
 				sound4.play();
-				Gdx.app.log("MyTag", "4");
-				return false;
+				break;
 			}
 		}
 		return false;
+
 	}
 
 	@Override
