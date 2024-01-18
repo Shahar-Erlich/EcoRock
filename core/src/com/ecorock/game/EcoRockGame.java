@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -37,44 +38,40 @@ public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
 	static int x=0;
 
 
-	class MyActor extends Actor{
-		public MyActor(){
-			setBounds(250,140,10,10);
-		}
-		@Override
-		public void draw(Batch batch, float parentAlpha) {
-			texture = new Texture(Gdx.files.internal("dog.png"));
-			setTouchable(Touchable.enabled);
-			batch.draw(texture,250,140,10,10);
-		}
-	}
-
 	@Override
 	public void create () {
-		//bgm = Gdx.audio.newMusic(Gdx.files.internal("ViolinSonata.mp3"));
-		//bgm.play();
+//		bgm = Gdx.audio.newMusic(Gdx.files.internal("ViolinSonata.mp3"));
+//		bgm.play();
 		stage = new Stage(new ScreenViewport());
 		Group group = new Group();
 		Image touch1 = new Image(new Texture(Gdx.files.internal("dog.png")));
-//		Image touch2 = new Image(new Texture(Gdx.files.internal("dog.png")));
-//		Image touch3 = new Image(new Texture(Gdx.files.internal("dog.png")));
-//		Image touch4 = new Image(new Texture(Gdx.files.internal("dog.png")));
+		Image touch2 = new Image(new Texture(Gdx.files.internal("badlogic.jpg")));
+		Image touch3 = new Image(new Texture(Gdx.files.internal("dog.png")));
+		Image touch4 = new Image(new Texture(Gdx.files.internal("badlogic.jpg")));
 
 		touch1.setName("t1");
-//		touch2.setName("t2");
-//		touch3.setName("t3");
-//		touch4.setName("t4");
+		touch2.setName("t2");
+		touch3.setName("t3");
+		touch4.setName("t4");
 
 		group.addActor(touch1);
-//		group.addActor(touch2);
-//		group.addActor(touch3);
-//		group.addActor(touch4);
+		group.addActor(touch2);
+		group.addActor(touch3);
+		group.addActor(touch4);
 		stage.addActor(group);
 
-		touch1.setPosition(200,150);
-//		touch2.setPosition(300,150);
-//		touch3.setPosition(400,150);
-//		touch4.setPosition(500,150);
+		touch1.setPosition(0,150);
+		touch1.setSize(300,300);
+		touch1.setBounds(0,150,300,300);
+		touch2.setPosition(300,150);
+		touch2.setSize(300,300);
+		touch2.setBounds(300,150,300,300);
+		touch3.setPosition(600,150);
+		touch3.setSize(300,300);
+		touch3.setBounds(600,150,300,300);
+		touch4.setPosition(900,150);
+		touch4.setSize(300,300);
+		touch4.setBounds(900,150,300,300);
 		Gdx.input.setInputProcessor(this);
 		sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
 		sound2 = Gdx.audio.newSound(Gdx.files.internal("guitar.mp3"));
@@ -92,7 +89,9 @@ public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
 
 	@Override
 	public void render () {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		ScreenUtils.clear(0, 0, 0.2f, 1);
+		stage.act();
 		stage.draw();
 	}
 	
@@ -123,12 +122,20 @@ public class EcoRockGame extends ApplicationAdapter  implements InputProcessor {
 			switch (hitButton.getName()) {
 				case "t1":
 					sound1.play();
-//			case "t2":
-//				sound2.play();
-//			case "t3":
-//				sound3.play();
-//			case "t4":
-//				sound4.play();
+					Gdx.app.log("MyTag", "1");
+					return false;
+			case "t2":
+				sound2.play();
+				Gdx.app.log("MyTag", "2");
+				return false;
+			case "t3":
+				sound3.play();
+				Gdx.app.log("MyTag", "3");
+				return false;
+			case "t4":
+				sound4.play();
+				Gdx.app.log("MyTag", "4");
+				return false;
 			}
 		}
 		return false;
