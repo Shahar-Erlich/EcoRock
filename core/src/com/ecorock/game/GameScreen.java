@@ -38,24 +38,29 @@ public class GameScreen implements Screen, InputProcessor {
     private Vector2 coord;
     private  boolean GAME_PAUSED = false;
     private Image touch1,touch2,touch3,touch4;
-    private Texture noteT;
+    private Texture noteT,BGT,ButtonT;
     Music music;
     long startTime;
-    float[] secs;
+    float[] secs,longs;
+    int[] pos;
     private FileHandle file;
+    float downT,upT;
+    String key;
 
     int noteId=0;
     public GameScreen(final EcoRockGame gam){
        this.game = gam;
-
+        music = Gdx.audio.newMusic(Gdx.files.internal("Undertale OST_ 090 - His Theme.mp3"));
+        music.play();
         stage = new Stage(new ScreenViewport());
-        Group group = new Group();
-        touch1 = new Image(new Texture(Gdx.files.internal("dog.png")));
-        touch2 = new Image(new Texture(Gdx.files.internal("dog.png")));
-        touch3 = new Image(new Texture(Gdx.files.internal("dog.png")));
-        touch4 = new Image(new Texture(Gdx.files.internal("dog.png")));
+        noteT = new Texture(Gdx.files.internal("NoteTest.png"));
+        BGT = new Texture(Gdx.files.internal("GuitarNeckTest.png"));
+        ButtonT = new Texture(Gdx.files.internal("ButtonTest.png"));
+        touch1 = new Image(ButtonT);
+        touch2 = new Image(ButtonT);
+        touch3 = new Image(ButtonT);
+        touch4 = new Image(ButtonT);
         Image pause = new Image(new Texture(Gdx.files.internal("dog.png")));
-
         touch1.setName("t1");
         touch2.setName("t2");
         touch3.setName("t3");
@@ -63,14 +68,13 @@ public class GameScreen implements Screen, InputProcessor {
         pause.setName("pause");
         Table root = new Table();
         root.setFillParent(true);
-        stage.addActor(root);
         root.bottom();
-        root.add(touch1).size(200,200).space(60);
-        root.add(touch2).size(200,200).space(60);
-        root.add(touch3).size(200,200).space(60);
-        root.add(touch4).size(200,200).space(60);
-        noteT = new Texture(Gdx.files.internal("badlogic.jpg"));
-        music = Gdx.audio.newMusic(Gdx.files.internal("Undertale OST_ 090 - His Theme.mp3"));
+        int space =45;
+        root.add(touch1).size(200,200).pad(space);
+        root.add(touch2).size(200,200).pad(space);
+        root.add(touch3).size(200,200).pad(space);
+        root.add(touch4).size(200,200).pad(space);
+        stage.addActor(root);
         startTime = TimeUtils.millis();
         Gdx.input.setInputProcessor(this);
         sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
@@ -79,11 +83,12 @@ public class GameScreen implements Screen, InputProcessor {
         sound4 = Gdx.audio.newSound(Gdx.files.internal("ping.mp3"));
         game.batch = new SpriteBatch();
         notes = new Array<Rectangle>();
-        spawnNote();
         file = Gdx.files.local("SongBeats/HisTheme.txt");
         beatProcessor bp = new beatProcessor();
         secs = bp.getSeconds();
-        music.play();
+        pos = bp.getPos();
+        longs = bp.getLongs();
+        createNotes();
     }
 
     @Override
@@ -91,17 +96,49 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
 
+    public void createNotes(){
+        float posI=0;
+        float height=128;
+        stage.act();
+        stage.draw();
+        //Gdx.app.log("MyTag",touch2.localToStageCoordinates(new Vector2(0,0))+"");
+        for (int i = 0; i < secs.length; i++) {
+            switch ((pos[i])){
+                case 1:
+                    Vector2 t1C = touch1.localToStageCoordinates(new Vector2(0,0));
+                    posI = t1C.x+100;
+                    break;
+                case 2:
+                    Vector2 t2C = touch2.localToStageCoordinates(new Vector2(0,0));
+                    posI = t2C.x+100;
+                    break;
+                case 3:
+                    Vector2 t3C = touch3.localToStageCoordinates(new Vector2(0,0));
+                    posI = t3C.x+100;
+                    break;
+                case 4:
+                    Vector2 t4C = touch4.localToStageCoordinates(new Vector2(0,0));
+                    posI = t4C.x+100;
+                    break;
+
+            }
+            if(longs[i]!=0){
+                height = longs[i]*600;
+            }
+        spawnNote(secs[i]*600,posI,height);
+            height=128;
+        }
+    }
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+        stage.getBatch().begin();
+            stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+            stage.getBatch().end();
 
             stage.act();
             stage.draw();
-            if (music.getPosition() >= secs[noteId]){
-                spawnNote();
-                noteId++;
-            }
             for (Iterator<Rectangle> iter = notes.iterator(); iter.hasNext(); ) {
                 Rectangle note = iter.next();
                 note.y -= 600 * Gdx.graphics.getDeltaTime();
@@ -112,8 +149,8 @@ public class GameScreen implements Screen, InputProcessor {
 
             }
             game.batch.begin();
-            for (Rectangle raindrop : notes) {
-                game.batch.draw(noteT, raindrop.x, raindrop.y, 64, 128);
+            for (Rectangle note : notes) {
+                game.batch.draw(noteT, note.x, note.y, note.width, note.height);
             }
             game.batch.end();
 
@@ -148,14 +185,15 @@ public class GameScreen implements Screen, InputProcessor {
         sound4.dispose();
         game.batch.dispose();
         noteT.dispose();
+        BGT.dispose();
+        ButtonT.dispose();
     }
-    private void spawnNote() {
+    private void spawnNote(float y,float x,float h) {
         Rectangle note = new Rectangle();
-        float[] pos = {50,350,650,950};
-        note.x = getRandom(pos);
-        note.y = Gdx.graphics.getHeight();
-        note.width = 64;
-        note.height = 128;
+        note.x = x;
+        note.y = y;
+        note.width = 90;
+        note.height = h;
         notes.add(note);
     }
     public static float getRandom(float[] array) {
@@ -179,22 +217,25 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        downT = music.getPosition();
         coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitButton = stage.hit(coord.x,coord.y,true);
-       // Gdx.app.log("MyTag", coord.toString());
+
         Rectangle rectangle = new Rectangle();
         rectangle.setPosition(coord.x,coord.y);
         Rectangle hitRect = new Rectangle();
         if(hitButton!=null)hitRect.setPosition(hitButton.getX(),hitButton.getY());
         hitRect.setSize(200,200);
         rectangle.setSize(200,200);
+
+       // Gdx.app.log("MyTag", hitRect.getCenter()+"");
         for (Iterator<Rectangle> iter = notes.iterator(); iter.hasNext(); ) {
             Rectangle note = iter.next();
             if (rectangle.overlaps(hitRect)&&hitRect.overlaps(note)) {
                 iter.remove();
             }
         }
-        String key="";
+        key="";
         if(hitButton!=null) {
             switch (hitButton.getName()) {
                 case "t1":
@@ -213,10 +254,6 @@ public class GameScreen implements Screen, InputProcessor {
                     GAME_PAUSED=true;
                     break;
             }
-
-            if (key != "") {
-            //file.writeString(key + "," + music.getPosition() +"\n",true);
-            }
             }
         return false;
 
@@ -224,6 +261,14 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        upT = music.getPosition();
+        if (key != "") {
+              file.writeString(key + "," + music.getPosition() + "-"+(upT - downT) + "\n", true);
+               //Gdx.app.log("Tag","Long");
+//            else{
+//              file.writeString(key + "," + music.getPosition() + "\n", true);
+//            }
+        }
         return false;
     }
 

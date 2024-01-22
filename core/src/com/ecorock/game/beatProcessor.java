@@ -6,14 +6,17 @@ import com.badlogic.gdx.files.FileHandle;
 public class beatProcessor {
 private String str;
 private String[] general,temp;
-private float[] secs;
+private float[] secs,longs;
+private int[]pos;
 private FileHandle file;
 public float[] getSeconds(){
-    file = Gdx.files.internal("SongBeats/HisTheme.txt");
+    //song offset ~1.5 secs
+    file = Gdx.files.internal("SongBeats/TestLong.txt");
     str = file.readString();
     general = str.split("\n");
     temp = new String[general.length];
     resetArr(temp);
+    findLongs(general);
     secs = new float[temp.length];
     for (int i = 0; i <temp.length ; i++) {
         for (int j = 2; j < 7; j++) {
@@ -25,7 +28,41 @@ public float[] getSeconds(){
     }
     return secs;
 }
+public float[] getLongs(){
+    longs = findLongs(general);
+    return longs;
+}
+public int[] getPos(){
+    file = Gdx.files.internal("SongBeats/TestLong.txt");
+    str = file.readString();
+    general = str.split("\n");
+    temp = new String[general.length];
+    resetArr(temp);
+    pos = new int[temp.length];
+    for (int i = 0; i <temp.length ; i++) {
+            temp[i]= String.valueOf(general[i].charAt(0));
+    }
+    for (int i = 0; i < temp.length; i++) {
+        pos[i] = Integer.parseInt(temp[i]);
+    }
+    return pos;
+}
+    private float[] findLongs(String[] str)
+    {
+        float[] longTimes = new float[str.length];
+        for (int i = 0; i < str.length; i++) {
+            if(str[i].contains("-")){
+                String temp ="";
+                for (int j = 8; j < str[i].length(); j++) {
+                    temp +=str[i].charAt(j);
+                }
+                longTimes[i] = Float.parseFloat(temp);
+            }
+        }
 
+
+        return longTimes;
+    }
 private String[] resetArr(String[] str){
     for (int i = 0; i < str.length; i++) {
         str[i]="";
