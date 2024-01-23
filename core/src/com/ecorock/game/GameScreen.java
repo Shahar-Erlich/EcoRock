@@ -11,17 +11,24 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -36,21 +43,25 @@ public class GameScreen implements Screen, InputProcessor {
     private Array<Rectangle> notes;
     private long lastNoteTime;
     private Vector2 coord;
-    private  boolean GAME_PAUSED = false;
-    private Image touch1,touch2,touch3,touch4;
+    private  boolean RUNNING;
+    private Image touch1,touch2,touch3,touch4, pause;
     private Texture noteT,BGT,ButtonT;
-    Music music;
-    long startTime;
-    float[] secs,longs;
-    int[] pos;
+    private Music music;
+    private long startTime;
+    private float[] secs,longs;
+    private int[] pos;
+    private float downT,upT;
+    private String key;
     private FileHandle file;
-    float downT,upT;
-    String key;
+    private int Score=0;
+    private TextureAtlas atlas;
+    private Skin skin;
 
     int noteId=0;
-    public GameScreen(final EcoRockGame gam){
+    public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong){
        this.game = gam;
-        music = Gdx.audio.newMusic(Gdx.files.internal("Undertale OST_ 090 - His Theme.mp3"));
+       this.file = chosenSongBeat;
+        music = Gdx.audio.newMusic(chosenSong);
         music.play();
         stage = new Stage(new ScreenViewport());
         noteT = new Texture(Gdx.files.internal("NoteTest.png"));
@@ -60,7 +71,10 @@ public class GameScreen implements Screen, InputProcessor {
         touch2 = new Image(ButtonT);
         touch3 = new Image(ButtonT);
         touch4 = new Image(ButtonT);
-        Image pause = new Image(new Texture(Gdx.files.internal("dog.png")));
+        pause = new Image(ButtonT);
+        atlas = new TextureAtlas("ui/terra-mother-ui.atlas");
+        skin = new Skin(Gdx.files.internal("ui/terra-mother-ui.json"),atlas);
+
         touch1.setName("t1");
         touch2.setName("t2");
         touch3.setName("t3");
@@ -69,12 +83,17 @@ public class GameScreen implements Screen, InputProcessor {
         Table root = new Table();
         root.setFillParent(true);
         root.bottom();
+        Table rootUi = new Table();
+        rootUi.setFillParent(true);
+        rootUi.right().top();
         int space =45;
+        rootUi.add(pause).size(200,200).fillY().align(Align.right);
         root.add(touch1).size(200,200).pad(space);
         root.add(touch2).size(200,200).pad(space);
         root.add(touch3).size(200,200).pad(space);
         root.add(touch4).size(200,200).pad(space);
         stage.addActor(root);
+        stage.addActor(rootUi);
         startTime = TimeUtils.millis();
         Gdx.input.setInputProcessor(this);
         sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
@@ -83,12 +102,12 @@ public class GameScreen implements Screen, InputProcessor {
         sound4 = Gdx.audio.newSound(Gdx.files.internal("ping.mp3"));
         game.batch = new SpriteBatch();
         notes = new Array<Rectangle>();
-        file = Gdx.files.local("SongBeats/HisTheme.txt");
-        beatProcessor bp = new beatProcessor();
+        beatProcessor bp = new beatProcessor(file);
         secs = bp.getSeconds();
         pos = bp.getPos();
         longs = bp.getLongs();
         createNotes();
+        RUNNING = true;
     }
 
     @Override
@@ -101,7 +120,6 @@ public class GameScreen implements Screen, InputProcessor {
         float height=128;
         stage.act();
         stage.draw();
-        //Gdx.app.log("MyTag",touch2.localToStageCoordinates(new Vector2(0,0))+"");
         for (int i = 0; i < secs.length; i++) {
             switch ((pos[i])){
                 case 1:
@@ -122,11 +140,10 @@ public class GameScreen implements Screen, InputProcessor {
                     break;
 
             }
-            if(longs[i]!=0){
+            if(longs[i]!=0 && longs[i]*600>128){
                 height = longs[i]*600;
             }
         spawnNote(secs[i]*600,posI,height);
-            height=128;
         }
     }
     @Override
@@ -136,23 +153,35 @@ public class GameScreen implements Screen, InputProcessor {
         stage.getBatch().begin();
             stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
             stage.getBatch().end();
+            if(RUNNING) {
+                if(!music.isPlaying())music.play();
+                stage.act();
+                stage.draw();
+                for (Iterator<Rectangle> iter = notes.iterator(); iter.hasNext(); ) {
+                    Rectangle note = iter.next();
+                    note.y -= 600 * Gdx.graphics.getDeltaTime();
+                    if (note.y < -note.height) {
+                        iter.remove();
+                        Gdx.app.log("MyTag", "Removed");
+                    }
 
-            stage.act();
-            stage.draw();
-            for (Iterator<Rectangle> iter = notes.iterator(); iter.hasNext(); ) {
-                Rectangle note = iter.next();
-                note.y -= 600 * Gdx.graphics.getDeltaTime();
-                if (note.y < -note.height) {
-                    iter.remove();
-                    Gdx.app.log("MyTag", "Removed");
                 }
+                game.batch.begin();
+                game.font.draw(game.batch, "Score:  " + Score, 0, Gdx.graphics.getHeight());
+                for (Rectangle note : notes) {
+                    game.batch.draw(noteT, note.x, note.y, note.width, note.height);
+                }
+                game.batch.draw(ButtonT,Gdx.graphics.getWidth()-200,Gdx.graphics.getHeight()-200,200,200);
+                game.batch.end();
+            }
+            else{
+                music.pause();
+                stage.draw();
+                game.batch.begin();
+                game.batch.draw(new Texture(Gdx.files.internal("dog.png")),0,0,200,200);
+                game.batch.end();
+            }
 
-            }
-            game.batch.begin();
-            for (Rectangle note : notes) {
-                game.batch.draw(noteT, note.x, note.y, note.width, note.height);
-            }
-            game.batch.end();
 
     }
 
@@ -220,7 +249,6 @@ public class GameScreen implements Screen, InputProcessor {
         downT = music.getPosition();
         coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitButton = stage.hit(coord.x,coord.y,true);
-
         Rectangle rectangle = new Rectangle();
         rectangle.setPosition(coord.x,coord.y);
         Rectangle hitRect = new Rectangle();
@@ -228,11 +256,13 @@ public class GameScreen implements Screen, InputProcessor {
         hitRect.setSize(200,200);
         rectangle.setSize(200,200);
 
-       // Gdx.app.log("MyTag", hitRect.getCenter()+"");
+
         for (Iterator<Rectangle> iter = notes.iterator(); iter.hasNext(); ) {
             Rectangle note = iter.next();
             if (rectangle.overlaps(hitRect)&&hitRect.overlaps(note)) {
                 iter.remove();
+                Score+=10;
+                Gdx.app.log("MyTag", "Hit!");
             }
         }
         key="";
@@ -251,7 +281,7 @@ public class GameScreen implements Screen, InputProcessor {
                     key="4";
                     break;
                 case "pause":
-                    GAME_PAUSED=true;
+                    RUNNING = false;
                     break;
             }
             }
@@ -263,7 +293,7 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         upT = music.getPosition();
         if (key != "") {
-              file.writeString(key + "," + music.getPosition() + "-"+(upT - downT) + "\n", true);
+              //file.writeString(key + "," + downT + "-"+(upT - downT) + "\n", true);
                //Gdx.app.log("Tag","Long");
 //            else{
 //              file.writeString(key + "," + music.getPosition() + "\n", true);

@@ -3,15 +3,21 @@ package com.ecorock.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
+import java.io.File;
+
 public class beatProcessor {
 private String str;
 private String[] general,temp;
 private float[] secs,longs;
 private int[]pos;
 private FileHandle file;
+
+public beatProcessor(FileHandle file){
+    this.file =file;
+}
+
 public float[] getSeconds(){
     //song offset ~1.5 secs
-    file = Gdx.files.internal("SongBeats/TestLong.txt");
     str = file.readString();
     general = str.split("\n");
     temp = new String[general.length];
@@ -33,7 +39,6 @@ public float[] getLongs(){
     return longs;
 }
 public int[] getPos(){
-    file = Gdx.files.internal("SongBeats/TestLong.txt");
     str = file.readString();
     general = str.split("\n");
     temp = new String[general.length];

@@ -71,6 +71,7 @@ project(":android") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.gdx-controllers:gdx-controllers-android:$gdxControllersVersion"
+        implementation 'com.github.hissaan:TimeCounter:1.2'
         
     }
 }
