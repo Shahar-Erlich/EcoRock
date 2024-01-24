@@ -18,7 +18,6 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         startGame.setOnClickListener(this);
     }
 
-    @Override
     public void onClick(View v) {
     if(v == startGame){
         startActivity(new Intent(HomeScreen.this, AndroidLauncher.class));

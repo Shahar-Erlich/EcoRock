@@ -35,7 +35,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.Iterator;
 import java.util.Random;
 
-public class EcoRockGame extends Game {
+public class EcoRockGame extends Game{
 
 	public SpriteBatch batch;
 	public BitmapFont font;
@@ -55,5 +55,4 @@ public class EcoRockGame extends Game {
 		batch.dispose();
 		font.dispose();
 	}
-
 }

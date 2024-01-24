@@ -18,11 +18,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -36,10 +40,14 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class GameScreen implements Screen, InputProcessor {
+    public interface MyGameCallback {
+        public void goToMenu();
+    }
     final EcoRockGame game;
-
+    // Local variable to hold the callback implementation
+    private static MyGameCallback myGameCallback;
     private Sound sound1,sound2,sound3,sound4;
-    Stage stage;
+    Stage stage,pStage;
     private Array<Rectangle> notes;
     private long lastNoteTime;
     private Vector2 coord;
@@ -56,14 +64,24 @@ public class GameScreen implements Screen, InputProcessor {
     private int Score=0;
     private TextureAtlas atlas;
     private Skin skin;
+    private TextButton resume,songP,mainMenu;
 
     int noteId=0;
+
+    // ** Additional **
+    // Setter for the callback
+    public void setMyGameCallback(MyGameCallback callback) {
+        myGameCallback = callback;
+    }
+    public GameScreen(final EcoRockGame game){this.game = game;}
     public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong){
+        Gdx.input.setInputProcessor(this);
        this.game = gam;
        this.file = chosenSongBeat;
         music = Gdx.audio.newMusic(chosenSong);
         music.play();
         stage = new Stage(new ScreenViewport());
+        pStage = new Stage(new ScreenViewport());
         noteT = new Texture(Gdx.files.internal("NoteTest.png"));
         BGT = new Texture(Gdx.files.internal("GuitarNeckTest.png"));
         ButtonT = new Texture(Gdx.files.internal("ButtonTest.png"));
@@ -74,7 +92,7 @@ public class GameScreen implements Screen, InputProcessor {
         pause = new Image(ButtonT);
         atlas = new TextureAtlas("ui/terra-mother-ui.atlas");
         skin = new Skin(Gdx.files.internal("ui/terra-mother-ui.json"),atlas);
-
+        createPause(pStage);
         touch1.setName("t1");
         touch2.setName("t2");
         touch3.setName("t3");
@@ -95,7 +113,6 @@ public class GameScreen implements Screen, InputProcessor {
         stage.addActor(root);
         stage.addActor(rootUi);
         startTime = TimeUtils.millis();
-        Gdx.input.setInputProcessor(this);
         sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
         sound2 = Gdx.audio.newSound(Gdx.files.internal("guitar.mp3"));
         sound3 = Gdx.audio.newSound(Gdx.files.internal("ding.mp3"));
@@ -154,6 +171,7 @@ public class GameScreen implements Screen, InputProcessor {
             stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
             stage.getBatch().end();
             if(RUNNING) {
+                Gdx.input.setInputProcessor(this);
                 if(!music.isPlaying())music.play();
                 stage.act();
                 stage.draw();
@@ -175,11 +193,16 @@ public class GameScreen implements Screen, InputProcessor {
                 game.batch.end();
             }
             else{
+                Gdx.input.setInputProcessor(pStage);
+                game.batch.begin();
+                for (Rectangle note : notes) {
+                    game.batch.draw(noteT, note.x, note.y, note.width, note.height);
+                }
+                game.batch.end();
                 music.pause();
                 stage.draw();
-                game.batch.begin();
-                game.batch.draw(new Texture(Gdx.files.internal("dog.png")),0,0,200,200);
-                game.batch.end();
+                pStage.act();
+                pStage.draw();
             }
 
 
@@ -225,6 +248,49 @@ public class GameScreen implements Screen, InputProcessor {
         note.height = h;
         notes.add(note);
     }
+    private void createPause(Stage stageS){
+        resume = new TextButton("Resume",skin);
+        resume.getLabel().setFontScale(3*Gdx.graphics.getDensity());
+        resume.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        resume.setBounds(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2-300,resume.getLabel().getWidth(),resume.getLabel().getHeight());
+        resume.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x,float y){
+                RUNNING=true;
+                Gdx.app.log("Tag","asfasdf");
+            }
+             });
+        songP = new TextButton("Song Select",skin);
+        songP.getLabel().setFontScale(3*Gdx.graphics.getDensity());
+        songP.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        songP.setBounds(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2,resume.getLabel().getWidth(),resume.getLabel().getHeight());
+        songP.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x,float y){
+                game.setScreen(new SongPickingScreen(game));
+                Gdx.app.log("Tag","asfasdf");
+            }
+        });
+        mainMenu = new TextButton("Main Menu",skin);
+        mainMenu.getLabel().setFontScale(3*Gdx.graphics.getDensity());
+        mainMenu.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2-500);
+        mainMenu.setBounds(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2-500,resume.getLabel().getWidth(),resume.getLabel().getHeight());
+        mainMenu.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x,float y){
+                if (myGameCallback != null) {
+
+                        myGameCallback.goToMenu();
+                } else {
+                    Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
+                }
+                Gdx.app.log("Tag","asfasdf");
+            }
+        });
+        stageS.addActor(songP);
+        stageS.addActor(resume);
+        stageS.addActor(mainMenu);
+    }
     public static float getRandom(float[] array) {
         int rnd = new Random().nextInt(array.length);
         return array[rnd];
@@ -248,7 +314,7 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         downT = music.getPosition();
         coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
-        Actor hitButton = stage.hit(coord.x,coord.y,true);
+        Actor hitButton = stage.hit(coord.x, coord.y, true);
         Rectangle rectangle = new Rectangle();
         rectangle.setPosition(coord.x,coord.y);
         Rectangle hitRect = new Rectangle();
@@ -267,25 +333,26 @@ public class GameScreen implements Screen, InputProcessor {
         }
         key="";
         if(hitButton!=null) {
-            switch (hitButton.getName()) {
-                case "t1":
-                    key="1";
-                    break;
-                case "t2":
-                    key="2";
-                    break;
-                case "t3":
-                    key="3";
-                    break;
-                case "t4":
-                    key="4";
-                    break;
-                case "pause":
-                    RUNNING = false;
-                    break;
-            }
+                switch (hitButton.getName()) {
+                    case "t1":
+                        key = "1";
+                        break;
+                    case "t2":
+                        key = "2";
+                        break;
+                    case "t3":
+                        key = "3";
+                        break;
+                    case "t4":
+                        key = "4";
+                        break;
+                    case "pause":
+                        RUNNING = false;
+                        break;
+                }
             }
         return false;
+
 
     }
 
@@ -321,4 +388,5 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+
 }

@@ -35,6 +35,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
     private Skin skin;
     private TextureAtlas atlas;
     private Vector2 coord;
+    private final int NumberOfLevels =2;
     public SongPickingScreen(final EcoRockGame game){
         this.game = game;
         stage = new Stage(new ScreenViewport());
@@ -46,8 +47,8 @@ public class SongPickingScreen implements Screen, InputProcessor {
         scroll.setScrollingDisabled(true,false);
         scroll.setFillParent(true);
         scroll.setName("scroll");
-        createList(LevelList);
         LevelList.left();
+        createList(LevelList);
         stage.addActor(scroll);
         chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
         chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
@@ -55,18 +56,40 @@ public class SongPickingScreen implements Screen, InputProcessor {
     public void createList(Table LevelList){
         int levelNum = 1;
         Label songName,author;
-        Image lvlImage = new Image(new Texture(Gdx.files.internal("LevelImages/Level " + levelNum +".png")));
-        lvlImage.setName("level " + levelNum);
-        LevelList.add(lvlImage).width(400).height(400);
-        switch (levelNum){
+        Image lvlImage;
+
+        Table temp;
+        for (int i = 1; i < NumberOfLevels+1; i++) {
+            lvlImage = new Image(new Texture(Gdx.files.internal("LevelImages/Level " + levelNum +".png")));
+            lvlImage.setName("level " + levelNum);
+            LevelList.add(lvlImage).width(400).height(400);
+        switch (levelNum) {
             case 1:
-                Table temp = new Table();
+                temp = new Table();
                 songName = new Label("His Theme", skin);
                 author = new Label("Toby Fox", skin);
                 author.setColor(Color.GRAY);
                 songName.setName("label");
                 author.setName("label");
-                songName.setFontScale(2*Gdx.graphics.getDensity());
+                songName.setFontScale(2 * Gdx.graphics.getDensity());
+                author.setFontScale(2);
+                songName.setAlignment(Align.top);
+                author.setAlignment(Align.top);
+                temp.add(songName);
+                temp.row();
+                temp.add(author).align(Align.left);
+                LevelList.add(temp).fillY().align(Align.top);
+                LevelList.row();
+                levelNum++;
+                break;
+            case 2:
+                temp = new Table();
+                songName = new Label("Littleroot Town", skin);
+                author = new Label("Go Ichinose", skin);
+                author.setColor(Color.GRAY);
+                songName.setName("label");
+                author.setName("label");
+                songName.setFontScale(2 * Gdx.graphics.getDensity());
                 author.setFontScale(2);
                 songName.setAlignment(Align.top);
                 author.setAlignment(Align.top);
@@ -75,6 +98,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
                 temp.add(author).align(Align.left);
                 LevelList.add(temp).fillY().align(Align.top);
                 break;
+        }
         }
         LevelList.row();
     }
@@ -146,6 +170,12 @@ public class SongPickingScreen implements Screen, InputProcessor {
             switch (hitButton.getName()) {
                 case "level 1":
                     chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
+                    game.setScreen(new GameScreen(game, chosenSongBeat, chosenSong));
+                    dispose();
+                    break;
+                case "level 2":
+                    chosenSong = Gdx.files.internal("Songs/Pokemon Emerald Soundtrack #5 - Littleroot Town.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
                     game.setScreen(new GameScreen(game, chosenSongBeat, chosenSong));
                     dispose();
