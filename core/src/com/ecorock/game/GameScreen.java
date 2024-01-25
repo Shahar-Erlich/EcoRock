@@ -65,6 +65,7 @@ public class GameScreen implements Screen, InputProcessor {
     private TextureAtlas atlas;
     private Skin skin;
     private TextButton resume,songP,mainMenu;
+    private static int notesMissed;
 
     int noteId=0;
 
@@ -75,6 +76,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
     public GameScreen(final EcoRockGame game){this.game = game;}
     public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong){
+        notesMissed=0;
         Gdx.input.setInputProcessor(this);
        this.game = gam;
        this.file = chosenSongBeat;
@@ -167,6 +169,7 @@ public class GameScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+        if(notesMissed==3){game.setScreen(new SongPickingScreen(game));music.stop();}
         stage.getBatch().begin();
             stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
             stage.getBatch().end();
@@ -180,6 +183,7 @@ public class GameScreen implements Screen, InputProcessor {
                     note.y -= 600 * Gdx.graphics.getDeltaTime();
                     if (note.y < -note.height) {
                         iter.remove();
+                        notesMissed++;
                         Gdx.app.log("MyTag", "Removed");
                     }
 
