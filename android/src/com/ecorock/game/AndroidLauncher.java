@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.ecorock.game.EcoRockGame;
+import com.ecorock.game.Ui.MainPage.HomeScreen;
 
 public class AndroidLauncher extends AndroidApplication implements GameScreen.MyGameCallback{
 	@Override
@@ -21,6 +21,6 @@ public class AndroidLauncher extends AndroidApplication implements GameScreen.My
 
 	@Override
 	public void goToMenu() {
-		startActivity(new Intent(AndroidLauncher.this,HomeScreen.class));
+		startActivity(new Intent(AndroidLauncher.this, HomeScreen.class));
 	}
 }

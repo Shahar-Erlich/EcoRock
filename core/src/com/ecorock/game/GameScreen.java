@@ -201,6 +201,8 @@ public class GameScreen implements Screen, InputProcessor {
                 game.batch.end();
                 music.pause();
                 stage.draw();
+                game.batch.begin();
+                game.batch.end();
                 pStage.act();
                 pStage.draw();
             }
