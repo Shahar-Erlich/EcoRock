@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+  <!-- Edit Text for Name -->
+  <EditText
+      android:id="@+id/edSignUpName"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:hint="Name"
+      android:inputType="textPersonName"
+      android:gravity="center"
+      android:layout_marginBottom="8dp"/>
+
+  <!-- Edit Text for Email -->
+  <EditText
+      android:id="@+id/edSignUpEmail"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:hint="Email"
+      android:inputType="textEmailAddress"
+      android:gravity="center"
+      android:layout_marginBottom="8dp"/>
+
+  <!-- Edit Text for Password -->
+  <EditText
+      android:id="@+id/edSignUpPassword"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:hint="Password"
+      android:inputType="textPassword"
+      android:gravity="center"
+      android:layout_marginBottom="8dp"/>
+
+  <!-- Sign Up Button -->
+  <Button
+      android:id="@+id/BtnSignup"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Sign Up"
+      android:layout_marginBottom="16dp"/>
+
+</LinearLayout>

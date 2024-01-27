@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.ecorock.game.AndroidLauncher;
+import com.ecorock.game.MainPage.MainPage;
 import com.ecorock.game.R;
 
 public class HomeScreen extends AppCompatActivity implements View.OnClickListener {
@@ -23,7 +24,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     public void onClick(View v) {
     if(v == startGame){
-        startActivity(new Intent(HomeScreen.this, AndroidLauncher.class));
+        startActivity(new Intent(HomeScreen.this, MainPage.class));
     }
     }
 }
