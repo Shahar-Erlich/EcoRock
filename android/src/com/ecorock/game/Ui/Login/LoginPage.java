@@ -61,6 +61,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                     loginModule.removeDataSharedPreferences();
                     intent.putExtra("username", user.getName());
                     intent.putExtra("email", Email);
+                    intent.putExtra("password", Pass);
                 }
                 startActivity(intent);
             }

@@ -87,6 +87,21 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         return null;
     }
+    public String getUserIdByMail(String mail){
+        String id;
+        Cursor cursor = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM "+ TABLE_NAME + " WHERE " + COLUMN_MAIL + " = ?";
+
+        cursor = db.rawQuery(query, new String[]{mail});
+        if(cursor.getCount()==1) {
+            cursor.moveToFirst();
+            id = cursor.getString(0);
+            cursor.close();
+            return id;
+        }
+        return null;
+    }
     public Boolean CheckLogIn(String Email, String Pass)
     {
 

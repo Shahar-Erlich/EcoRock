@@ -28,4 +28,14 @@ public class repository {
     public void deleteAll(){
         helper.deleteAllData();
     }
+    public void updateUser(String oldMail,User user){
+
+        helper.updateData(getUserId(oldMail),user.getName(),user.getMail(), user.getPass());
+    }
+    public String getUserId(String mail){
+        return helper.getUserIdByMail(mail);
+    }
+    public void deleteUser(String mail){
+        helper.deleteOneRow(getUserId(mail));
+    }
 }

@@ -3,19 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/ll"
     android:gravity="center">
 
     <!-- Image View for the Profile Picture -->
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/dog"
+        android:src="@drawable/default_icon"
         android:scaleType="centerCrop"
         android:layout_marginBottom="16dp"/>
 
     <!-- Text View for the Name -->
     <TextView
-        android:id="@+id/nameAc"
+        android:id="@+id/nameAcO"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name:"
@@ -24,7 +25,7 @@
 
     <!-- Text View for the Password -->
     <TextView
-        android:id="@+id/MailAc"
+        android:id="@+id/MailAcO"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Mail:"
@@ -33,23 +34,31 @@
 
     <!-- Login Button -->
     <Button
-        android:id="@+id/LoginBtn"
+        android:id="@+id/LoginBtnO"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="Log Out"
         android:padding="10dp"
-        android:background="@android:color/holo_blue_light"
+        android:background="@android:color/holo_purple"
         android:textColor="@android:color/white"
         android:layout_marginBottom="8dp"/>
-
-    <!-- Sign Up Button -->
     <Button
-        android:id="@+id/SignupBtn"
+        android:id="@+id/EditProfBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign Up"
+        android:text="Edit"
         android:padding="10dp"
-        android:background="@android:color/holo_green_light"
-        android:textColor="@android:color/white"/>
+        android:background="@android:color/holo_purple"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
+    <Button
+        android:id="@+id/RemoveProfBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:padding="10dp"
+        android:background="@android:color/holo_purple"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
 
 </LinearLayout>
