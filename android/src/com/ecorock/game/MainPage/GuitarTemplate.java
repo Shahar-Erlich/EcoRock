@@ -16,7 +16,6 @@ public class GuitarTemplate {
         this.name = name;
     }
     public GuitarTemplate(){
-
     }
 
     public int getResource() {
