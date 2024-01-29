@@ -17,7 +17,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         // Example:
         switch (position) {
             case 0:
-                return new ShopFragment();
+                return new GuitarFragment();
             case 1:
                 return new MainFragment();
             case 2:

@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_fragment1"
-        android:title="Fragment 1"
+        android:title="Shop"
         android:icon="@drawable/dog" />
 
     <item
         android:id="@+id/navigation_fragment2"
-        android:title="Fragment 2"
+        android:title="Main"
         android:icon="@drawable/dog" />
 
     <item
         android:id="@+id/navigation_fragment3"
-        android:title="Fragment 3"
-        android:icon="@drawable/dog" />
+        android:title="Account"
+        android:icon="@drawable/default_icon" />
 </menu>

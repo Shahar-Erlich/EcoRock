@@ -4,16 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <!-- Top right settings button -->
-  <ImageButton
-      android:id="@+id/settingsButton"
-      android:layout_width="50dp"
-      android:layout_height="50dp"
-      android:layout_alignParentEnd="true"
-      android:layout_alignParentTop="true"
-      android:layout_marginEnd="16dp"
-      android:layout_marginTop="16dp"
-      android:src="@drawable/dog" />
 
   <!-- Fragment container -->
   <FrameLayout

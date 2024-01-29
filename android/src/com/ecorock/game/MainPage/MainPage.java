@@ -22,6 +22,7 @@ public class MainPage extends AppCompatActivity {
         setContentView(R.layout.activity_main_page);
         viewPager = findViewById(R.id.viewPager);
         bottomNavigation = findViewById(R.id.bottomNavigation);
+        bottomNavigation.setItemIconTintList(null);
 
         // Attach the adapter to the ViewPager
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
