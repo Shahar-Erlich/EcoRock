@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.audio.Sound;
 
 
 public class SongPickingScreen implements Screen, InputProcessor {
@@ -35,11 +36,13 @@ public class SongPickingScreen implements Screen, InputProcessor {
     private Skin skin;
     private TextureAtlas atlas;
     private Vector2 coord;
+    private Sound sound1;
     private final int NumberOfLevels =2;
     public SongPickingScreen(final EcoRockGame game){
         this.game = game;
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this);
+        sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
         atlas = new TextureAtlas("ui/terra-mother-ui.atlas");
         skin = new Skin(Gdx.files.internal("ui/terra-mother-ui.json"),atlas);
         LevelList = new Table();
@@ -172,11 +175,12 @@ public class SongPickingScreen implements Screen, InputProcessor {
                     chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
                     game.setScreen(new GameScreen(game, chosenSongBeat, chosenSong));
+                    //sound1.play();
                     dispose();
                     break;
                 case "level 2":
                     chosenSong = Gdx.files.internal("Songs/Pokemon Emerald Soundtrack #5 - Littleroot Town.mp3");
-                    chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
                     game.setScreen(new GameScreen(game, chosenSongBeat, chosenSong));
                     dispose();
                     break;

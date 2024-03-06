@@ -18,14 +18,12 @@ public beatProcessor(FileHandle file){
 
 public float[] getSeconds(){
     //song offset ~1.5 secs
-    str = file.readString();
-    general = str.split("\n");
-    temp = new String[general.length];
-    resetArr(temp);
-    findLongs(general);
+    Divide();
     secs = new float[temp.length];
+    int k;
     for (int i = 0; i <temp.length ; i++) {
-        for (int j = 2; j < 7; j++) {
+        k =findStart(i);
+        for (int j = 2; j < k; j++) {
             temp[i]+= String.valueOf(general[i].charAt(j));
         }
     }
@@ -39,10 +37,6 @@ public float[] getLongs(){
     return longs;
 }
 public int[] getPos(){
-    str = file.readString();
-    general = str.split("\n");
-    temp = new String[general.length];
-    resetArr(temp);
     pos = new int[temp.length];
     for (int i = 0; i <temp.length ; i++) {
             temp[i]= String.valueOf(general[i].charAt(0));
@@ -54,14 +48,17 @@ public int[] getPos(){
 }
     private float[] findLongs(String[] str)
     {
+        Divide();
         float[] longTimes = new float[str.length];
+        int k;
         for (int i = 0; i < str.length; i++) {
+            k = findStart(i)+2;
             if(str[i].contains("-")){
-                String temp ="";
-                for (int j = 8; j < str[i].length(); j++) {
-                    temp +=str[i].charAt(j);
+                String temp2 ="";
+                for (int j = k; j < str[i].length(); j++) {
+                    temp2 +=str[i].charAt(j);
                 }
-                longTimes[i] = Float.parseFloat(temp);
+                longTimes[i] = Float.parseFloat(temp2);
             }
         }
 
@@ -74,4 +71,19 @@ private String[] resetArr(String[] str){
     }
 return str;
 }
+    private void Divide(){
+        str = file.readString();
+        general = str.split("\n");
+        temp = new String[general.length];
+        resetArr(temp);
+    }
+    private int findStart(int ind){
+        int i=0;
+        int j =2;
+        while(!(general[ind].charAt(j)=='-')) {
+            i = j;
+            j++;
+        }
+        return i;
+    }
 }

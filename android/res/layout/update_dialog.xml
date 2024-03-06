@@ -10,7 +10,7 @@
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/default_icon"
+        android:src="@drawable/defaulticondrawing"
         />
     <EditText
         android:id="@+id/editTextName"
