@@ -2,13 +2,15 @@ package com.ecorock.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 
 import java.io.File;
 
 public class beatProcessor {
 private String str;
 private String[] general,temp;
-private float[] secs,longs;
+private float[] secs;
+private Array<Float> longs;
 private int[]pos;
 private FileHandle file;
 
@@ -32,7 +34,7 @@ public float[] getSeconds(){
     }
     return secs;
 }
-public float[] getLongs(){
+public Array<Float> getLongs(){
     longs = findLongs(general);
     return longs;
 }
@@ -46,10 +48,10 @@ public int[] getPos(){
     }
     return pos;
 }
-    private float[] findLongs(String[] str)
+    private Array<Float> findLongs(String[] str)
     {
         Divide();
-        float[] longTimes = new float[str.length];
+        Array<Float> longTimes = new Array<Float>();
         int k;
         for (int i = 0; i < str.length; i++) {
             k = findStart(i)+2;
@@ -58,7 +60,7 @@ public int[] getPos(){
                 for (int j = k; j < str[i].length(); j++) {
                     temp2 +=str[i].charAt(j);
                 }
-                longTimes[i] = Float.parseFloat(temp2);
+                longTimes.add(Float.parseFloat(temp2));
             }
         }
 

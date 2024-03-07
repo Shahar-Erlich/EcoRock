@@ -1,0 +1,22 @@
+
+progress-ui.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+loading-bar1
+  rotate: false
+  xy: 1, 428
+  size: 501, 49
+  split: 0, 0, 0, 0
+  orig: 501, 49
+  offset: 0, 0
+  index: -1
+loading-frame
+  rotate: false
+  xy: 1, 479
+  size: 540, 60
+  split: 0, 0, 0, 0
+  orig: 540, 60
+  offset: 0, 0
+  index: -1

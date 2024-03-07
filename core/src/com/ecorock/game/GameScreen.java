@@ -22,9 +22,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -47,10 +49,6 @@ public class GameScreen implements Screen, InputProcessor {
     public interface MyGameCallback {
         public void goToMenu();
     }
-    public interface completeDelete{
-        public void onCompleteDelete();
-
-    }
 
     final EcoRockGame game;
     // Local variable to hold the callback implementation
@@ -58,17 +56,17 @@ public class GameScreen implements Screen, InputProcessor {
     private Sound sound1,sound2,sound3,sound4;
     Stage stage,pStage;
     private Array<Rectangle> notes;
-    private long lastNoteTime;
     private Vector2 coord;
-    private  boolean RUNNING,isDeleted=true,isNoteDone;
-    private Image touch1,touch2,touch3,touch4, pause;
+    private  boolean RUNNING,isDeleted=true;
+    private Button touch1,touch2,touch3,touch4, pause;
     private Texture noteT,BGT,ButtonT;
     private Music music;
     private long startTime;
-    private float[] secs,longs;
+    private float[] secs;
+    private Array<Float> longs;
     private int[] pos;
     private float downT,upT;
-    private Array<String> key;
+    private String key="";
     private FileHandle file;
     private int Score=0;
     private TextureAtlas atlas;
@@ -77,14 +75,14 @@ public class GameScreen implements Screen, InputProcessor {
     private static int notesMissed;
     private String temp="";
     private int removeNoteInd;
-    static completeDelete completeDelete;
     private String TimingScore="";
     private Label ScoreL;
+    private float touchStart,touchEnd,noteY ,noteH;
+    private  ProgressBar progressBar;
 
     int noteId=0;
-    public void setOnDeleteCompleteListener(completeDelete listener){
-        completeDelete = listener;
-    }
+    private float timeSeconds = 0f;
+    private float period = 1f;
 
     // ** Additional **
     // Setter for the callback
@@ -105,13 +103,13 @@ public class GameScreen implements Screen, InputProcessor {
         noteT = new Texture(Gdx.files.internal("NoteTest.png"));
         BGT = new Texture(Gdx.files.internal("GuitarNeckTest.png"));
         ButtonT = new Texture(Gdx.files.internal("ButtonTest.png"));
-        touch1 = new Image(ButtonT);
-        touch2 = new Image(ButtonT);
-        touch3 = new Image(ButtonT);
-        touch4 = new Image(ButtonT);
-        pause = new Image(ButtonT);
-        atlas = new TextureAtlas("ui/terra-mother-ui.atlas");
-        skin = new Skin(Gdx.files.internal("ui/terra-mother-ui.json"),atlas);
+        atlas = new TextureAtlas("ui/arcade-ui.atlas");
+        skin = new Skin(Gdx.files.internal("ui/arcade-ui.json"),atlas);
+        touch1 = new Button(skin);
+        touch2 = new Button(skin);
+        touch3 = new Button(skin);
+        touch4 = new Button(skin);
+        pause = new Button(skin);
         createPause(pStage);
         touch1.setName("t1");
         touch2.setName("t2");
@@ -123,10 +121,14 @@ public class GameScreen implements Screen, InputProcessor {
         root.bottom();
         Table rootUi = new Table();
         rootUi.setFillParent(true);
-        rootUi.right().top();
+        rootUi.top();
+        progressBar = new ProgressBar(0, 100, .1f, false,new Skin(Gdx.files.internal("ui/progress-ui.json"),new TextureAtlas("ui/progress-ui.atlas")));
+
+        rootUi.add(progressBar).growX();
+        rootUi.row();
         int space =45;
-        rootUi.add(pause).size(200,200).fillY().align(Align.right);
-        rootUi.add(ScoreL);
+        rootUi.add(pause).size(200,200).growX().align(Align.right);
+    //rootUi.add(ScoreL);
         root.add(touch1).size(200,200).pad(space);
         root.add(touch2).size(200,200).pad(space);
         root.add(touch3).size(200,200).pad(space);
@@ -146,7 +148,6 @@ public class GameScreen implements Screen, InputProcessor {
         longs = bp.getLongs();
         createNotes();
         RUNNING = true;
-        key = new Array<>();
     }
 
     @Override
@@ -156,7 +157,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void createNotes(){
         float posI=0;
-        float height=128;
+        double height=128;
         stage.act();
         stage.draw();
         for (int i = 0; i < secs.length; i++) {
@@ -180,14 +181,16 @@ public class GameScreen implements Screen, InputProcessor {
                     break;
 
             }
-            if(longs[i]!=0 && longs[i]*600>128){
-                height = longs[i]*600;
+            if(longs.get(i)!=0 && longs.get(i)*600>150){
+                height = Math.floor(longs.get(i)*600);
             }
-        spawnNote(secs[i]*600,posI,height);
+        spawnNote(secs[i]*600,posI,(float)height);
         }
     }
     @Override
     public void render(float delta) {
+        timeSeconds +=Gdx.graphics.getRawDeltaTime();
+        progressBar.setValue((timeSeconds/120)*100);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
 //        if(notesMissed==1){
@@ -206,20 +209,33 @@ public class GameScreen implements Screen, InputProcessor {
                 for (Rectangle note: notes) {
                     note.y -= 600 * Gdx.graphics.getDeltaTime();
                     if (note.y < -note.height) {
+                        if(isDeleted==false){
+                            isDeleted=true;
+                        }
+                        longs.removeIndex(notes.indexOf(note,false));
                         notes.removeValue(note,true);
+
                         //notes.indexOf(note,true);
                         notesMissed++;
-                        Gdx.app.log("MyTag", "Removed");
+                       // Gdx.app.log("MyTag", "Removed");
                     }
                 }
-
+                if(isDeleted==false){
+                     noteH=notes.get(removeNoteInd).getHeight();
+                     noteY=notes.get(removeNoteInd).getY();
+                    notes.get(removeNoteInd).setY(noteY+600*Gdx.graphics.getDeltaTime());
+                    notes.get(removeNoteInd).setHeight(noteH-600*Gdx.graphics.getDeltaTime());
+                    if(notes.get(removeNoteInd).getHeight()<=0.5){
+                        isDeleted=true;
+                    }
+                }
                 game.batch.begin();
                 game.font.draw(game.batch, TimingScore,(Gdx.graphics.getWidth()/4),Gdx.graphics.getHeight());
-                game.font.draw(game.batch, temp, 0, Gdx.graphics.getHeight());
+               // game.font.draw(game.batch, temp, 0, Gdx.graphics.getHeight());
                 for (Rectangle note : notes) {
                     game.batch.draw(noteT, note.x, note.y, note.width, note.height);
                 }
-                game.batch.draw(ButtonT,Gdx.graphics.getWidth()-200,Gdx.graphics.getHeight()-200,200,200);
+               // game.batch.draw(ButtonT,Gdx.graphics.getWidth()-200,Gdx.graphics.getHeight()-200,200,200);
                 game.batch.end();
             }
             else{
@@ -282,9 +298,9 @@ public class GameScreen implements Screen, InputProcessor {
     }
     private void createPause(Stage stageS){
         resume = new TextButton("Resume",skin);
-        resume.getLabel().setFontScale(3*Gdx.graphics.getDensity());
-        resume.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-        resume.setBounds(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2-300,resume.getLabel().getWidth(),resume.getLabel().getHeight());
+        resume.getLabel().setFontScale(1*Gdx.graphics.getDensity());
+        resume.setPosition(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()/2);
+        resume.setBounds(resume.getX(),Gdx.graphics.getHeight()/2,resume.getLabel().getWidth(),resume.getLabel().getHeight());
         resume.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event,float x,float y){
@@ -292,10 +308,11 @@ public class GameScreen implements Screen, InputProcessor {
                // Gdx.app.log("Tag","asfasdf");
             }
              });
+
         songP = new TextButton("Song Select",skin);
-        songP.getLabel().setFontScale(3*Gdx.graphics.getDensity());
-        songP.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-        songP.setBounds(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2,resume.getLabel().getWidth(),resume.getLabel().getHeight());
+        songP.getLabel().setFontScale(1*Gdx.graphics.getDensity());
+        songP.setPosition(resume.getX(),resume.getY()-200);
+        songP.setBounds(resume.getX(),resume.getY()-200,resume.getLabel().getWidth(),resume.getLabel().getHeight());
         songP.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event,float x,float y){
@@ -304,9 +321,9 @@ public class GameScreen implements Screen, InputProcessor {
             }
         });
         mainMenu = new TextButton("Main Menu",skin);
-        mainMenu.getLabel().setFontScale(3*Gdx.graphics.getDensity());
-        mainMenu.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2-500);
-        mainMenu.setBounds(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2-500,resume.getLabel().getWidth(),resume.getLabel().getHeight());
+        mainMenu.getLabel().setFontScale(1*Gdx.graphics.getDensity());
+        mainMenu.setPosition(resume.getX(),resume.getY()-400);
+        mainMenu.setBounds(resume.getX(),resume.getY()-400,resume.getLabel().getWidth(),resume.getLabel().getHeight());
         mainMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event,float x,float y){
@@ -322,10 +339,6 @@ public class GameScreen implements Screen, InputProcessor {
         stageS.addActor(songP);
         stageS.addActor(resume);
         stageS.addActor(mainMenu);
-    }
-    public static float getRandom(float[] array) {
-        int rnd = new Random().nextInt(array.length);
-        return array[rnd];
     }
     @Override
     public boolean keyDown(int keycode) {
@@ -344,10 +357,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(pointer ==0) {
-            downT = music.getPosition();
-            key = new Array<>();
-        }
+        downT = timeSeconds;
        // Gdx.app.log("Tag",pointer + "");
         coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitButton = stage.hit(coord.x, coord.y, true);
@@ -357,45 +367,46 @@ public class GameScreen implements Screen, InputProcessor {
         if(hitButton!=null)hitRect.setPosition(hitButton.getX(),hitButton.getY());
         hitRect.setSize(200,200);
         rectangle.setSize(200,200);
-        for (Rectangle note: notes) {
-            if (rectangle.overlaps(hitRect) && hitRect.overlaps(note)) {
-                if(note.getY()<hitButton.getY()+200&&note.getY()>hitButton.getY()+100){
-                    WriteLog("Perfect!");
-                    TimingScore="perfect!";
+        if(hitButton!=pause) {
+            for (Rectangle note : notes) {
+                if (rectangle.overlaps(hitRect) && hitRect.overlaps(note)) {
+                    if (note.getY() < hitButton.getY() + 200 && note.getY() > hitButton.getY() + 100) {
+                        WriteLog("Perfect!");
+                        TimingScore = "perfect!";
+                    } else if (note.getY() < hitButton.getY() + 100 && note.getY() > hitButton.getY()) {
+                        WriteLog("Good!");
+                        TimingScore = "good!";
+                    } else {
+                        WriteLog("Missed!");
+                        TimingScore = "missed!";
+                        notesMissed++;
+                    }
+                    if (note.getHeight() > 128) {
+                        isDeleted = false;
+                        touchStart = timeSeconds;
+                        removeNoteInd = notes.indexOf(note, false);
+                    } else {
+                        longs.removeIndex(notes.indexOf(note, false));
+                        notes.removeValue(note, true);
+                    }
+                    Score += 10;
+                    //  Gdx.app.log("MyTag", "Hit!");
                 }
-                else if(note.getY()<hitButton.getY()+100&&note.getY()>hitButton.getY()){
-                   WriteLog("Good!");
-                   TimingScore="good!";
-                }
-                else{
-                    WriteLog("Missed!");
-                    TimingScore="missed!";
-                    notesMissed++;
-                }
-                if (note.getHeight() > 128) {
-                    isDeleted= false;
-                    removeNoteInd = notes.indexOf(note,false);
-                }
-                else {
-                    notes.removeValue(note,true);
-                }
-                Score += 10;
-              //  Gdx.app.log("MyTag", "Hit!");
             }
         }
         if(hitButton!=null) {
                 switch (hitButton.getName()) {
                     case "t1":
-                        key.add("1");
+                        key="1";
                         break;
                     case "t2":
-                        key.add("2");
+                        key="2";
                         break;
                     case "t3":
-                        key.add("3");
+                        key="3";
                         break;
                     case "t4":
-                        key.add("4");
+                        key="4";
                         break;
                     case "pause":
                         RUNNING = false;
@@ -408,22 +419,18 @@ public class GameScreen implements Screen, InputProcessor {
     }
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        upT = timeSeconds;
         if(isDeleted==false) {
-        notes.removeIndex(removeNoteInd);
+            touchEnd=timeSeconds;
+            float timeTouched = touchEnd-touchStart;
+            if(timeTouched>=longs.get(removeNoteInd)) {
+                notes.removeIndex(removeNoteInd);
+                longs.removeIndex(removeNoteInd);
+            }
         isDeleted=true;
         }
-//        if(pointer ==0) {
-//            upT = music.getPosition();
-//        }
-//        FileHandle file2 = Gdx.files.local("test.txt");
-//        if (key.size>pointer) {
-//            //Gdx.app.log("Tag", pointer + " " + key.get(pointer) + " " + key.toString());
-//            file2.writeString(key.get(pointer) + "," + downT + "-" + (upT - downT) + "\n", true);
-//           // Gdx.app.log("Tag", "Long");
-//        }
-//            else {
-//            file2.writeString( key+ "," + downT + "-" + (upT - downT) + "\n", true);
-//        }
+        //FileHandle file2 = Gdx.files.local("test.txt");
+        //file2.writeString( key+ "," + (downT+0.2) + "-" + (upT - downT) + "\n", true);
                 return false;
     }
 

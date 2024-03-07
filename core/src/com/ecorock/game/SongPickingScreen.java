@@ -43,8 +43,8 @@ public class SongPickingScreen implements Screen, InputProcessor {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this);
         sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
-        atlas = new TextureAtlas("ui/terra-mother-ui.atlas");
-        skin = new Skin(Gdx.files.internal("ui/terra-mother-ui.json"),atlas);
+        atlas = new TextureAtlas("ui/arcade-ui.atlas");
+        skin = new Skin(Gdx.files.internal("ui/arcade-ui.json"),atlas);
         LevelList = new Table();
         scroll = new ScrollPane(LevelList);
         scroll.setScrollingDisabled(true,false);
@@ -53,7 +53,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
         LevelList.left();
         createList(LevelList);
         stage.addActor(scroll);
-        chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
+        chosenSongBeat = Gdx.files.internal("SongBeats/HisTheme.txt");
         chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
     }
     public void createList(Table LevelList){
@@ -74,14 +74,14 @@ public class SongPickingScreen implements Screen, InputProcessor {
                 author.setColor(Color.GRAY);
                 songName.setName("label");
                 author.setName("label");
-                songName.setFontScale(2 * Gdx.graphics.getDensity());
-                author.setFontScale(2);
+               // songName.setFontScale(2 * Gdx.graphics.getDensity());
+                //author.setFontScale(2);
                 songName.setAlignment(Align.top);
                 author.setAlignment(Align.top);
                 temp.add(songName);
                 temp.row();
-                temp.add(author).align(Align.left);
-                LevelList.add(temp).fillY().align(Align.top);
+                temp.add(author).align(Align.center);
+                LevelList.add(temp).fillY().align(Align.left);
                 LevelList.row();
                 levelNum++;
                 break;
@@ -92,14 +92,14 @@ public class SongPickingScreen implements Screen, InputProcessor {
                 author.setColor(Color.GRAY);
                 songName.setName("label");
                 author.setName("label");
-                songName.setFontScale(2 * Gdx.graphics.getDensity());
-                author.setFontScale(2);
+                //songName.setFontScale(1 * Gdx.graphics.getDensity());
+                //author.setFontScale(2);
                 songName.setAlignment(Align.top);
                 author.setAlignment(Align.top);
                 temp.add(songName);
                 temp.row();
-                temp.add(author).align(Align.left);
-                LevelList.add(temp).fillY().align(Align.top);
+                temp.add(author).align(Align.center);
+                LevelList.add(temp).fillY().align(Align.left);
                 break;
         }
         }
@@ -173,7 +173,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
             switch (hitButton.getName()) {
                 case "level 1":
                     chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
-                    chosenSongBeat = Gdx.files.internal("SongBeats/TestLong.txt");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/HisTheme.txt");
                     game.setScreen(new GameScreen(game, chosenSongBeat, chosenSong));
                     //sound1.play();
                     dispose();
