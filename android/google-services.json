@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "315885536884",
+    "project_id": "ecorock-3ba85",
+    "storage_bucket": "ecorock-3ba85.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315885536884:android:0c8320e298b832b567f321",
+        "android_client_info": {
+          "package_name": "com.ecorock.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFgFdln_6DaoP8D5663R9rDBIneil0eZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
