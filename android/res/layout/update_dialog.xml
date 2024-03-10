@@ -3,69 +3,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageButton
-        android:layout_marginTop="100dp"
-        android:id="@+id/imageSelect"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/defaulticondrawing"
-        />
-    <EditText
-        android:id="@+id/editTextName"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:layout_below="@id/imageSelect"
-        android:hint="Name"/>
+<!--    <ImageButton-->
+<!--        android:layout_marginTop="100dp"-->
+<!--        android:id="@+id/imageSelect"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/defaulticondrawing"-->
+<!--        />-->
+<!--    <EditText-->
+<!--        android:id="@+id/editTextName"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_below="@id/imageSelect"-->
+<!--        android:hint="Name"/>-->
 
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextName"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:hint="Email"/>
+<!--    <EditText-->
+<!--        android:id="@+id/editTextEmail"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/editTextName"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:hint="Email"/>-->
 
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextEmail"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:hint="Password"
-        android:inputType="textPassword"/>
+<!--    <EditText-->
+<!--        android:id="@+id/editTextPassword"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/editTextEmail"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:hint="Password"-->
+<!--        android:inputType="textPassword"/>-->
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextPassword"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/buttonLayout"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/editTextPassword"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="16dp">-->
 
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Cancel"/>
+<!--        <Button-->
+<!--            android:id="@+id/btnCancel"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Cancel"/>-->
 
-        <Button
-            android:id="@+id/btnUpdate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Update"/>
+<!--        <Button-->
+<!--            android:id="@+id/btnUpdate"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Update"/>-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
 </RelativeLayout>

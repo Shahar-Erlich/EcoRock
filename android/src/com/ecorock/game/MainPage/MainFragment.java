@@ -5,10 +5,12 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.ecorock.game.AndroidLauncher;
 import com.ecorock.game.R;
@@ -29,6 +31,7 @@ public class MainFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private Button btn;
+    private boolean Logged;
 
     public MainFragment() {
         // Required empty public constructor
@@ -67,10 +70,17 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         btn = view.findViewById(R.id.playButton);
+        MainPage mainPage = (MainPage)requireActivity();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity().getBaseContext(), AndroidLauncher.class));
+                Logged= mainPage.getLoggedIn();
+                if(Logged) {
+                    startActivity(new Intent(getActivity().getBaseContext(), AndroidLauncher.class));
+                }
+                else{
+                    Toast.makeText(requireContext(), "Log in first to play!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

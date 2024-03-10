@@ -44,7 +44,7 @@ public class EcoRockGame extends Game{
 		batch = new SpriteBatch();
 		font = new BitmapFont(Gdx.files.internal("ui/title-export.fnt"));
 		font.getData().setScale(3);
-		this.setScreen(new SongPickingScreen(this));
+		this.setScreen(new SongPickingScreen(this,""));
 	}
 
 	public void render() {

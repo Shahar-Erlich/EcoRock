@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.badlogic.gdx.Game;
+import com.ecorock.game.GameScreen;
 import com.ecorock.game.R;
 import com.ecorock.game.databinding.FragmentGuitarBinding;
 
@@ -56,7 +58,7 @@ public class MyGuitarRecyclerViewAdapter extends RecyclerView.Adapter<MyGuitarRe
         @Override
         public void onClick(View v) {
             if(v==imgB){
-
+                GameScreen.changeBGT(mItem.getFilePath());
             }
         }
     }

@@ -43,5 +43,11 @@ xmlns:tools="http://schemas.android.com/tools">
         android:exported="false"
 
         />
+    <activity
+        android:name="com.ecorock.game.MainPage.UpdateActivity"
+        android:exported="false"
+
+        />
 </application>
 </manifest>
+

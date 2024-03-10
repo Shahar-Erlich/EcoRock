@@ -14,7 +14,7 @@ import com.google.android.material.navigation.NavigationBarView;
 public class MainPage extends AppCompatActivity {
 
     private ViewPager viewPager;
-    private boolean LoggedIn = false;
+    private static boolean LoggedIn;
     private BottomNavigationView bottomNavigation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,4 +75,8 @@ public class MainPage extends AppCompatActivity {
     private void navigateToFragment(int position) {
         viewPager.setCurrentItem(position);
     }
+    public void setLoggedIn(boolean l){
+        LoggedIn=l;
+    }
+    public boolean getLoggedIn(){return LoggedIn;}
 }
