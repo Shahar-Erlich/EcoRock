@@ -61,25 +61,17 @@ public class LoginModule {
             etPassword.setError("Password isn't strong enough");
             return false;
         }
-//            if(!(etPassword.getText().toString().equals(etPasswordConfirmation.getText().toString())))
-//            {
-//                etPassword.setError("Password Confirmation does not match");
-//                return false;
-//            }
-        if(repository.checkLogin(etEmail.getText().toString(),etPassword.getText().toString())) {
-            etPassword.setText("");
-            etEmail.setText("");
-            return true;
-        }
         return false;
     }
-    public void SharedPreferences(String Name, String Email, String Password)
+    public void SharedPreferences(String Name, String Email, String Password,int prof,int level)
     {
             SharedPreferences sharedPreferences = context.getSharedPreferences("Main", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("username", Name);
             editor.putString("email", Email);
             editor.putString("password", Password);
+            editor.putInt("prof",prof);
+            editor.putInt("level",level);
             editor.apply();
     }
     public void removeDataSharedPreferences(){
@@ -88,6 +80,8 @@ public class LoginModule {
         editor.remove("username");
         editor.remove("email");
         editor.remove("password");
+        editor.remove("prof");
+        editor.remove("level");
         editor.apply();
     }
     public User getUser(String Mail){

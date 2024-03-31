@@ -2,6 +2,9 @@ package com.ecorock.game.Ui.Login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +22,7 @@ import com.ecorock.game.R;
 import com.ecorock.game.Repository.repository;
 import com.ecorock.game.Ui.Signup.SignupPage;
 import com.ecorock.game.User;
+import com.ecorock.game.currentUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,11 +36,15 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     private Button btnL;
     private repository repository;
     private CheckBox rmmbr;
+    private boolean flag=false;
     private FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
+        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(),getWindow().getDecorView());
+        windowInsetsControllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
         edMail = findViewById(R.id.edName);
         edPass = findViewById(R.id.edPassword);
         forgot = findViewById(R.id.forgotPass);
@@ -63,29 +71,35 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
             db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful()){
-                        for (QueryDocumentSnapshot document : task.getResult()){
-                            if(document.getData().get("email").toString().equals(u.getMail())&&document.getData().get("pass").toString().equals(u.getPass())){
+                    if(task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.getData().get("email").toString().equals(u.getMail()) && document.getData().get("pass").toString().equals(u.getPass())) {
                                 Intent intent = new Intent(LoginPage.this, MainPage.class);
                                 u.setName(document.getData().get("name").toString());
-                                if(rmmbr.isChecked()) {
-                                    loginModule.SharedPreferences(u.getName(), Email, Pass);
-                                }
-                                else {
+                                u.setProf(Integer.parseInt(document.getData().get("prof").toString()));
+                                u.setLevel(Integer.parseInt(document.getData().get("level").toString()));
+                                if (rmmbr.isChecked()) {
+                                    loginModule.SharedPreferences(u.getName(), Email, Pass, u.getProf(),u.getLevel());
+                                } else {
                                     loginModule.removeDataSharedPreferences();
                                     intent.putExtra("username", u.getName());
                                     intent.putExtra("email", Email);
                                     intent.putExtra("password", Pass);
+                                    intent.putExtra("prof", u.getProf());
+                                    intent.putExtra("level",u.getLevel());
+
+                                    //currentUser.setLevel(u.getLevel());
                                 }
+                                flag = true;
                                 startActivity(intent);
                             }
-                            }
-                        Toast.makeText(getBaseContext(), "Invalid mail or password!", Toast.LENGTH_SHORT).show();
+                        }
+                        if (flag == false) {
+                            Toast.makeText(getBaseContext(), "Invalid mail or password!", Toast.LENGTH_SHORT).show();
                         }
                     }
+                    }
             });
-//            if(loginModule.Check_User(edMail,edPass)){
-//                User user = repository.findUserByMail(Email);
 
         }
     }

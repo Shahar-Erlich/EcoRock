@@ -21,9 +21,7 @@ import java.util.LinkedList;
  */
 public class GuitarFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 2;
     private  RecyclerView recyclerView;
 
@@ -34,7 +32,6 @@ public class GuitarFragment extends Fragment {
     public GuitarFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static GuitarFragment newInstance(int columnCount) {
         GuitarFragment fragment = new GuitarFragment();

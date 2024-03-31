@@ -2,8 +2,17 @@ package com.ecorock.game;
 
 public class User {
     private String name,pass,mail;
+    private int prof,level;
 
-    public User(String name, String mail,String pass) {
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public User(String name, String mail, String pass) {
         this.name = name;
         this.pass = pass;
         this.mail = mail;
@@ -13,7 +22,17 @@ public class User {
         this.pass = pass;
         this.mail = mail;
     }
+    public User() {
 
+    }
+
+    public int getProf() {
+        return prof;
+    }
+
+    public void setProf(int prof) {
+        this.prof = prof;
+    }
     public String getName() {
         return name;
     }

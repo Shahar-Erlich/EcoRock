@@ -11,6 +11,7 @@
       android:layout_centerHorizontal="true"
       android:scaleType="centerCrop"
       android:src="@drawable/defaulticondrawing"
+      android:background="@null"
       />
   <EditText
       android:id="@+id/editTextName"

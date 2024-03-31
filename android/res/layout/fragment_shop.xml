@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:id="@+id/shop_fragment"
     android:layout_height="match_parent"
-    tools:context=".MainPage.ShopFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context=".MainPage.GuitarFragment">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

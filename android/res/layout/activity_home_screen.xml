@@ -6,14 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@drawable/main_menu_img"
     tools:context=".Ui.MainPage.HomeScreen">
 
   <Button
       android:id="@+id/startGame"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="200dp"
+      android:layout_height="100dp"
       android:text="Start"
-      android:layout_gravity="center"
-      tools:layout_editor_absoluteX="157dp"
-      tools:layout_editor_absoluteY="232dp" />
+      android:textColor="#ffffff"
+      android:background="@drawable/dog"
+      android:textSize="40dp"
+      android:layout_gravity="center" />
 </LinearLayout>

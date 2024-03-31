@@ -70,20 +70,6 @@ public class SignUpModule {
                 etPassword.setError("Password isn't strong enough");
                 return false;
             }
-//            if(!(etPassword.getText().toString().equals(etPasswordConfirmation.getText().toString())))
-//            {
-//                etPassword.setError("Password Confirmation does not match");
-//                return false;
-//            }
-            if(!(repository.findUser(etEmail.getText().toString())))
-            {
-                etEmail.setError("Mail already exists");
-                return false;
-            }
-            etPassword.setText("");
-           // etPasswordConfirmation.setText("");
-            etUser.setText("");
-            etEmail.setText("");
 
 
             return true;

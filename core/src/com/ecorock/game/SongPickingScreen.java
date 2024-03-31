@@ -26,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -36,28 +37,39 @@ import com.badlogic.gdx.audio.Sound;
 public class SongPickingScreen implements Screen, InputProcessor {
     public interface MyGameCallback {
         public void goBack();
+        public void changeFirst(boolean b);
     }
     final EcoRockGame game;
     private ScrollPane scroll;
     private FileHandle chosenSongBeat,chosenSong;
-    private Stage stage;
+    private Stage stage,tStage;
     private Table LevelList;
     private Skin skin;
     private TextureAtlas atlas;
     private Vector2 coord;
     private Sound sound1;
     private GameScreen gameScreen;
-    private Button btnBack;
-    private final int NumberOfLevels =2;
+    private Button btnBack,btnHelp;
     private InputMultiplexer multiplexer;
     private static MyGameCallback myGameCallback;
+    private static int numberOfLevels;
+    private TextButton end;
+    private Label TutTXT;
+    private String TutText="";
+    private FileHandle fileHandle;
+    private Texture noteT;
+    private static boolean firstTime=true;
+    private boolean helpB=false;
     public void setMyGameCallback(MyGameCallback callback) {
         myGameCallback = callback;
     }
-    public SongPickingScreen(final EcoRockGame game){this.game = game;}
+    public SongPickingScreen(final EcoRockGame game){
+        this.game = game;
+    }
     public SongPickingScreen(final EcoRockGame game,String s){
         this.game = game;
         stage = new Stage(new ScreenViewport());
+        tStage = new Stage(new ScreenViewport());
         multiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(multiplexer);
         multiplexer.addProcessor(this);
@@ -66,30 +78,42 @@ public class SongPickingScreen implements Screen, InputProcessor {
         skin = new Skin(Gdx.files.internal("ui/arcade-ui.json"),atlas);
         LevelList = new Table();
         btnBack = new Button(skin);
+        btnHelp = new Button(skin);
         btnBack.setName("back");
+        btnHelp.setName("help");
         scroll = new ScrollPane(LevelList);
         scroll.setScrollingDisabled(true,false);
         scroll.setFillParent(true);
         scroll.setName("scroll");
+        noteT = new Texture(Gdx.files.internal("NoteTest.png"));
         LevelList.left();
         createList(LevelList);
         Table rootUi = new Table();
         rootUi.setFillParent(true);
         rootUi.top();
+        rootUi.add(btnHelp).size(200,200).align(Align.right).fillX();
+        rootUi.row();
         rootUi.add(btnBack).size(200,200);
         stage.addActor(scroll);
+        fileHandle = Gdx.files.internal("TutorialText.txt");
+        TutText = fileHandle.readString();
         stage.addActor(rootUi);
         multiplexer.addProcessor(stage);
         chosenSongBeat = Gdx.files.internal("SongBeats/HisTheme.txt");
         chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
+        createTut(tStage);
     }
+    public static void setNumberOfLevels(int l){
+        numberOfLevels = l;
+    }
+    public static void setFirstTime(boolean f){firstTime=f;}
     public void createList(Table LevelList){
         int levelNum = 1;
         Label songName,author;
         Image lvlImage;
 
         Table temp;
-        for (int i = 1; i < NumberOfLevels+1; i++) {
+        for (int i = 0; i < numberOfLevels+1; i++) {
             lvlImage = new Image(new Texture(Gdx.files.internal("LevelImages/Level " + levelNum +".png")));
             lvlImage.setName("level " + levelNum);
             LevelList.add(lvlImage).width(400).height(400);
@@ -141,9 +165,46 @@ public class SongPickingScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+        if(firstTime||helpB){
             stage.act();
             stage.draw();
-            dispose();
+            stage.getBatch().begin();
+            stage.getBatch().draw(noteT,0,end.getY(),Gdx.graphics.getWidth(),TutTXT.getHeight());
+            stage.getBatch().end();
+            tStage.act();
+            tStage.draw();
+        }
+        else {
+            stage.act();
+            stage.draw();
+        }
+    }
+    public void createTut(Stage stageS){
+        end = new TextButton("Continue",skin);
+        end.getLabel().setFontScale(1*Gdx.graphics.getDensity());
+        end.setPosition(Gdx.graphics.getWidth()/2-4,Gdx.graphics.getHeight()/10);
+        end.setBounds(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()/10,end.getLabel().getWidth(),end.getLabel().getHeight());
+        end.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x,float y){
+                if(firstTime=true) {
+                    firstTime = false;
+                    myGameCallback.changeFirst(false);
+                }
+                if(helpB==true)
+                {
+                    helpB=false;
+                }
+            Gdx.input.setInputProcessor(multiplexer);
+            }
+        });
+        TutTXT = new Label(TutText,skin);
+        TutTXT.setPosition(0,end.getY()+100);
+        TutTXT.setFontScale(Gdx.graphics.getHeight()/3000f);
+        // Table root = new Table();
+        //root.add(end);
+        stageS.addActor(TutTXT);
+        stageS.addActor(end);
     }
 
     @Override
@@ -168,7 +229,6 @@ public class SongPickingScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-
     }
 
     @Override
@@ -206,20 +266,21 @@ public class SongPickingScreen implements Screen, InputProcessor {
                     }
                     break;
                 }
+                case "help":
+                    helpB=true;
+                    Gdx.input.setInputProcessor(tStage);
+                    break;
                 case "level 1":
                     chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/HisTheme.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,1,numberOfLevels+1);
                     game.setScreen(gameScreen);
-                    //sound1.play();
-                    dispose();
                     break;
                 case "level 2":
                     chosenSong = Gdx.files.internal("Songs/Pokemon Emerald Soundtrack #5 - Littleroot Town.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
                     game.setScreen(gameScreen);
-                    dispose();
                     break;
             }
         }
