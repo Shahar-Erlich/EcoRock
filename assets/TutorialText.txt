@@ -1,0 +1,30 @@
+             Hello and welcome to EcoRock!
+                In this game your goal is
+                to hit notes to the music.
+
+                         But be careful, 
+            if you miss even a single note
+                      the game ends!
+At the bottom of the screen there's 4 buttons.
+        each corresponds to a "lane" of notes.
+
+                         To hit a note,
+           when the note is just overlaping it
+                press the correct button!
+
+            Try to get the timing correctly,
+           hitting the button too late may:
+	            grant less points 
+                  or even make you lose!
+
+           There are 2 types of notes:
+Short Notes - press the right button
+            when the two overlap.
+
+Long Notes -short notes but you have to hold the note 
+               until the "trail" ends.
+
+         Each short note will grant you points 
+           and long notes grant even more!	
+                      
+                         Have Fun!
