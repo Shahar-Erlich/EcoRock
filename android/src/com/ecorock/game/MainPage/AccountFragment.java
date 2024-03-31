@@ -196,13 +196,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 prof.setImageResource(R.drawable.defaulticondrawing);
                 break;
             case 2:
-                prof.setImageResource(R.drawable.dog);
+                prof.setImageResource(R.drawable.icon_hand);
                 break;
             case 3:
                 prof.setImageResource(R.drawable.default_icon);
                 break;
             case 4:
-                prof.setImageResource(R.drawable.ic_launcher);
+                prof.setImageResource(R.drawable.yugi_icon);
                 break;
         }
     }

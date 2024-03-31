@@ -13,9 +13,10 @@
       android:id="@+id/startGame"
       android:layout_width="200dp"
       android:layout_height="100dp"
-      android:text="Start"
       android:textColor="#ffffff"
-      android:background="@drawable/dog"
+      android:text="START"
+      android:gravity="center"
+      android:background="@drawable/button_bg"
       android:textSize="40dp"
       android:layout_gravity="center" />
 </LinearLayout>

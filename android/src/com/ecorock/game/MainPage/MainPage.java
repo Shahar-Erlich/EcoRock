@@ -75,12 +75,23 @@ public class MainPage extends AppCompatActivity {
                         if (document.getData().get("email").toString().equals(mailS)) {
                             String id = document.getId();
                             firstTime = Boolean.parseBoolean(document.getData().get("firstTime").toString());
-                            if (Integer.parseInt(document.getData().get("level").toString()) < Level) {
-                                Map<String, Object> user = new HashMap<>();
-                                user.put("level", Level);
-                                if(score!=-1&&levelI!=-1&&Integer.parseInt(document.getData().get("levelScores." + String.valueOf(levelI)).toString()) < score){
-                                user.put("levelScores." + String.valueOf(levelI),score);
+                            Map<String, Object> user = new HashMap<>();
+                            if(score!=-1&&levelI!=-1){
+                                if(document.getData().get("levelScores." + String.valueOf(levelI))!=null) {
+                                    if(Integer.parseInt(document.getData().get("levelScores." + String.valueOf(levelI)).toString())<score) {
+                                        user.put("levelScores." + String.valueOf(levelI), score);
+                                    }
                                 }
+                                else{
+                                    user.put("levelScores." + String.valueOf(levelI), score);
+                                }
+                            }
+                            if (Integer.parseInt(document.getData().get("level").toString()) < Level) {
+                                user.put("level", Level);
+                            }
+                            else{
+                                Level = Integer.parseInt(document.getData().get("level").toString());
+                            }
                                 // Add a new document with a generated ID
                                 db.collection("users")
                                         .document(id).update(user)
@@ -94,10 +105,6 @@ public class MainPage extends AppCompatActivity {
                                             public void onFailure(@NonNull Exception e) {
                                             }
                                         });
-                            }
-                            else{
-                                Level = Integer.parseInt(document.getData().get("level").toString());
-                            }
                         }
                     }
                 }
@@ -115,6 +122,7 @@ public class MainPage extends AppCompatActivity {
                 return true;
             }
         });
+        viewPager.setPageTransformer(true, new CustomPageTransformer());
 
         // Set up BottomNavigationView to handle item selection
         bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

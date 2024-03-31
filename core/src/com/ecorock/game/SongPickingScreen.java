@@ -9,6 +9,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -28,6 +29,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -57,7 +60,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
     private Label TutTXT;
     private String TutText="";
     private FileHandle fileHandle;
-    private Texture noteT;
+    private Texture BGT,ButtonT;
     private static boolean firstTime=true;
     private boolean helpB=false;
     public void setMyGameCallback(MyGameCallback callback) {
@@ -85,15 +88,15 @@ public class SongPickingScreen implements Screen, InputProcessor {
         scroll.setScrollingDisabled(true,false);
         scroll.setFillParent(true);
         scroll.setName("scroll");
-        noteT = new Texture(Gdx.files.internal("NoteTest.png"));
+        BGT = new Texture(Gdx.files.internal("SongPickingBG.png"));
+        ButtonT = new Texture(Gdx.files.internal("button_bg.png"));
         LevelList.left();
         createList(LevelList);
         Table rootUi = new Table();
         rootUi.setFillParent(true);
         rootUi.top();
-        rootUi.add(btnHelp).size(200,200).align(Align.right).fillX();
-        rootUi.row();
-        rootUi.add(btnBack).size(200,200);
+        rootUi.add(btnHelp).size(200,200).align(Align.right).growX();
+        rootUi.add(btnBack).size(200,200).align(Align.left).growX();
         stage.addActor(scroll);
         fileHandle = Gdx.files.internal("TutorialText.txt");
         TutText = fileHandle.readString();
@@ -132,6 +135,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
                 temp.add(songName);
                 temp.row();
                 temp.add(author).align(Align.center);
+                temp.setBackground(new TextureRegionDrawable(ButtonT));
                 LevelList.add(temp).fillY().align(Align.left);
                 LevelList.row();
                 levelNum++;
@@ -150,7 +154,86 @@ public class SongPickingScreen implements Screen, InputProcessor {
                 temp.add(songName);
                 temp.row();
                 temp.add(author).align(Align.center);
+                temp.setBackground(new TextureRegionDrawable(ButtonT));
                 LevelList.add(temp).fillY().align(Align.left);
+                LevelList.row();
+                levelNum++;
+                break;
+            case 3:
+                temp = new Table();
+                songName = new Label("The Legend Of Zelda", skin);
+                author = new Label("Koji Kondo", skin);
+                author.setColor(Color.GRAY);
+                songName.setName("label");
+                author.setName("label");
+                //songName.setFontScale(1 * Gdx.graphics.getDensity());
+                //author.setFontScale(2);
+                songName.setAlignment(Align.top);
+                author.setAlignment(Align.top);
+                temp.add(songName);
+                temp.row();
+                temp.add(author).align(Align.center);
+                temp.setBackground(new TextureRegionDrawable(ButtonT));
+                LevelList.add(temp).fillY().align(Align.left);
+                LevelList.row();
+                levelNum++;
+                break;
+            case 4:
+                temp = new Table();
+                songName = new Label("Green Hill Zone", skin);
+                author = new Label("Masato Nakamura", skin);
+                author.setColor(Color.GRAY);
+                songName.setName("label");
+                author.setName("label");
+                //songName.setFontScale(1 * Gdx.graphics.getDensity());
+                //author.setFontScale(2);
+                songName.setAlignment(Align.top);
+                author.setAlignment(Align.top);
+                temp.add(songName);
+                temp.row();
+                temp.add(author).align(Align.center);
+                temp.setBackground(new TextureRegionDrawable(ButtonT));
+                LevelList.add(temp).fillY().align(Align.left);
+                LevelList.row();
+                levelNum++;
+                break;
+            case 5:
+                temp = new Table();
+                songName = new Label("Jump Up, Super Star!", skin);
+                author = new Label("Naoto Kubo", skin);
+                author.setColor(Color.GRAY);
+                songName.setName("label");
+                author.setName("label");
+                //songName.setFontScale(1 * Gdx.graphics.getDensity());
+                //author.setFontScale(2);
+                songName.setAlignment(Align.top);
+                author.setAlignment(Align.top);
+                temp.add(songName);
+                temp.row();
+                temp.add(author).align(Align.center);
+                temp.setBackground(new TextureRegionDrawable(ButtonT));
+                LevelList.add(temp).fillY().align(Align.left);
+                LevelList.row();
+                levelNum++;
+                break;
+            case 6:
+                temp = new Table();
+                songName = new Label("Il Vento D'oro", skin);
+                author = new Label("Yugo Kanno", skin);
+                author.setColor(Color.GRAY);
+                songName.setName("label");
+                author.setName("label");
+                //songName.setFontScale(1 * Gdx.graphics.getDensity());
+                //author.setFontScale(2);
+                songName.setAlignment(Align.top);
+                author.setAlignment(Align.top);
+                temp.add(songName);
+                temp.row();
+                temp.add(author).align(Align.center);
+                temp.setBackground(new TextureRegionDrawable(ButtonT));
+                LevelList.add(temp).fillY().align(Align.left);
+                LevelList.row();
+                levelNum++;
                 break;
         }
         }
@@ -165,11 +248,14 @@ public class SongPickingScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+        stage.getBatch().begin();
+        stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        stage.getBatch().end();
         if(firstTime||helpB){
             stage.act();
             stage.draw();
             stage.getBatch().begin();
-            stage.getBatch().draw(noteT,0,end.getY(),Gdx.graphics.getWidth(),TutTXT.getHeight());
+            stage.getBatch().draw(ButtonT,0,end.getY(),Gdx.graphics.getWidth(),TutTXT.getHeight());
             stage.getBatch().end();
             tStage.act();
             tStage.draw();
@@ -278,6 +364,30 @@ public class SongPickingScreen implements Screen, InputProcessor {
                     break;
                 case "level 2":
                     chosenSong = Gdx.files.internal("Songs/Pokemon Emerald Soundtrack #5 - Littleroot Town.mp3");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    game.setScreen(gameScreen);
+                    break;
+                case "level 3":
+                    chosenSong = Gdx.files.internal("Songs/Zelda Main Theme Song.mp3");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/TLOZ.txt");
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    game.setScreen(gameScreen);
+                    break;
+                case "level 4":
+                    chosenSong = Gdx.files.internal("Songs/Sonic The Hedgehog OST - Green Hill Zone.mp3");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/GreenHillZone.txt");
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    game.setScreen(gameScreen);
+                    break;
+                case "level 5":
+                    chosenSong = Gdx.files.internal("Songs/Super Mario Odyssey - Jump Up, Super Star!.mp3");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    game.setScreen(gameScreen);
+                    break;
+                case "level 6":
+                    chosenSong = Gdx.files.internal("Songs/il vento d'oro.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
                     gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
                     game.setScreen(gameScreen);

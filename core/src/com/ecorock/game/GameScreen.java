@@ -63,7 +63,7 @@ public class GameScreen implements Screen, InputProcessor {
     private Vector2 coord;
     private  boolean RUNNING,isDeleted=true,longPressed=false,ended=false;
     private Button touch1,touch2,touch3,touch4, pause;
-    private Texture noteT,noteT2,BGT,ButtonT;
+    private Texture noteT,noteT2,BGT,ButtonT,appleT,canT,bagT,bananaT;
     private Music music;
     private long startTime;
     private Label done;
@@ -83,7 +83,7 @@ public class GameScreen implements Screen, InputProcessor {
     private  InputMultiplexer multiplexer;
     private Array<Integer> longInd;
     private Array<Texture> noteTs;
-    private static String texturePath="GuitarNeckTest.png";
+    private static String texturePath="skin_default.png";
     private Texture tempT;
     private float fadeTime=1;
     private int levelI,uLevel;
@@ -109,6 +109,10 @@ public class GameScreen implements Screen, InputProcessor {
         eStage = new Stage(new ScreenViewport());
         noteT = new Texture(Gdx.files.internal("NoteTest.png"));
         noteT2 = new Texture(Gdx.files.internal("can.png"));
+        appleT =new Texture(Gdx.files.internal("apple.png"));
+        bananaT =new Texture(Gdx.files.internal("banana.png"));
+        canT =new Texture(Gdx.files.internal("can.png"));
+        bagT =new Texture(Gdx.files.internal("tBag.png"));
         BGT = new Texture(Gdx.files.internal(texturePath));
         ButtonT = new Texture(Gdx.files.internal("ButtonTest.png"));
         atlas = new TextureAtlas("ui/arcade-ui.atlas");
@@ -211,12 +215,14 @@ public class GameScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+        stage.getBatch().begin();
+        stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        stage.getBatch().end();
         if(music.getVolume()<=0){
             if(ended==false){
                 multiplexer.addProcessor(eStage);
             }
             stage.getBatch().begin();
-            stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
             stage.getBatch().draw(noteT,0,resume.getY()-400,Gdx.graphics.getWidth(),Gdx.graphics.getHeight()/2);
             stage.getBatch().end();
             ended=true;
@@ -229,7 +235,7 @@ public class GameScreen implements Screen, InputProcessor {
         if(RUNNING){
             timeSeconds +=Gdx.graphics.getDeltaTime();
         }
-        if(timeSeconds>6&&music.isPlaying()){
+        if(timeSeconds>60&&music.isPlaying()){
             fadeTime-= delta * 0.7;
             music.setVolume(fadeTime);
         }
@@ -239,9 +245,6 @@ public class GameScreen implements Screen, InputProcessor {
           return;
        }
             if(RUNNING) {
-                stage.getBatch().begin();
-                stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-                stage.getBatch().end();
                 progressBar.setValue((timeSeconds/120)*100);
                 stage.act();
                 stage.draw();
@@ -333,6 +336,10 @@ public class GameScreen implements Screen, InputProcessor {
         BGT.dispose();
         ButtonT.dispose();
         tempT.dispose();
+        appleT.dispose();
+        bananaT.dispose();
+        canT.dispose();
+        bagT.dispose();
     }
     private void spawnNote(float y,float x,float h) {
         Rectangle note = new Rectangle();
@@ -342,23 +349,23 @@ public class GameScreen implements Screen, InputProcessor {
         note.height = h;
         notes.add(note);
         noteTs.add(RandomTex());
+      //noteTs.add(noteT2);
     }
     private Texture RandomTex(){
         Random random = new Random();
         int i = random.nextInt(4);
-        tempT= new Texture(Gdx.files.internal("apple.png"));
         switch (i){
             case 0:
-                tempT= new Texture(Gdx.files.internal("apple.png"));
+                tempT= appleT;
                 break;
             case 1:
-                tempT= new Texture(Gdx.files.internal("can.png"));
+                tempT= canT;
             break;
             case 2:
-                tempT= new Texture(Gdx.files.internal("tBag.png"));
+                tempT= bagT;
             break;
             case 3:
-                tempT= new Texture(Gdx.files.internal("banana.png"));
+                tempT= bananaT;
             break;
         }
         return tempT;
@@ -536,8 +543,8 @@ public class GameScreen implements Screen, InputProcessor {
             }
         isDeleted=true;
         }
-        //FileHandle file2 = Gdx.files.local("test.txt");
-        //file2.writeString( key+ "," + (downT+0.2) + "-" + (upT - downT) + "\n", true);
+      // FileHandle file2 = Gdx.files.local("test.txt");
+      // file2.writeString( key+ "," + (downT+0.2) + "-" + (upT - downT) + "\n", true);
                 return false;
     }
 

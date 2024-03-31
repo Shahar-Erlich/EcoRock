@@ -73,13 +73,13 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                 icon.setImageResource(R.drawable.defaulticondrawing);
                 break;
             case 2:
-                icon.setImageResource(R.drawable.dog);
+                icon.setImageResource(R.drawable.icon_hand);
                 break;
             case 3:
                 icon.setImageResource(R.drawable.default_icon);
                 break;
             case 4:
-                icon.setImageResource(R.drawable.ic_launcher);
+                icon.setImageResource(R.drawable.yugi_icon);
                 break;
         }
         db=FirebaseFirestore.getInstance();
@@ -194,7 +194,7 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
         }
         if(v==i2){
             prof =2;
-            icon.setImageResource(R.drawable.dog);
+            icon.setImageResource(R.drawable.icon_hand);
             dialog.dismiss();
         }
         if(v==i3){
@@ -204,7 +204,7 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
         }
         if(v==i4){
             prof =4;
-            icon.setImageResource(R.drawable.ic_launcher);
+            icon.setImageResource(R.drawable.yugi_icon);
             dialog.dismiss();
         }
     }

@@ -45,10 +45,14 @@ public class GuitarTemplate {
     }
     public static List<GuitarTemplate> getList(){
         List<GuitarTemplate> gtl = new LinkedList<>();
-        GuitarTemplate defaultGuitar = new GuitarTemplate(R.drawable.guitarneckdefault,"Default Skin","GuitarNeckTest.png");
-        GuitarTemplate defaultGuitar2 = new GuitarTemplate(R.drawable.guitarneckdefault2,"Default Skin 2","GuitarNeckTest2.png");
+        GuitarTemplate defaultGuitar = new GuitarTemplate(R.drawable.skin_default,"Default Skin","skin_default.png");
+        GuitarTemplate defaultGuitar2 = new GuitarTemplate(R.drawable.skin1,"Vapor Wave","skin1.png");
+        GuitarTemplate defaultGuitar3 = new GuitarTemplate(R.drawable.skin2,"Galaxy","skin2.png");
+        GuitarTemplate defaultGuitar4 = new GuitarTemplate(R.drawable.skin3,"White","skin3.png");
         gtl.add(defaultGuitar);
         gtl.add(defaultGuitar2);
+        gtl.add(defaultGuitar3);
+        gtl.add(defaultGuitar4);
         return gtl;
     }
 }
