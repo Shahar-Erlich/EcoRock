@@ -1,0 +1,58 @@
+{
+"com.badlogic.gdx.graphics.g2d.BitmapFont": {
+	"title-export": {
+		"file": "title-export.fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	},
+	"x-export": {
+		"file": "199x-export.fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	}
+},
+"com.badlogic.gdx.graphics.Color": {
+	"RGBA_0_0_0_255": {
+		"r": 0,
+		"g": 0,
+		"b": 0,
+		"a": 1
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle": {
+	"default": {
+		"checkboxOn": "checkbox on",
+		"checkboxOff": "checkbox off",
+		"font": "x-export"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
+	"default": {
+		"font": "x-export",
+		"fontColorSelected": "RGBA_0_0_0_255",
+		"fontColorUnselected": "RGBA_0_0_0_255",
+		"selection": "button_bg"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+	"default": {
+		"background": "button_bg"
+	},
+	"list": {
+		"background": "button_bg"
+	},
+	"select-box": {
+		"background": "button_bg"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle": {
+	"default": {
+		"font": "x-export",
+		"fontColor": "RGBA_0_0_0_255",
+		"scrollStyle": "default",
+		"listStyle": "default"
+	}
+}
+}

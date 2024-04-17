@@ -86,7 +86,7 @@ public class GameScreen implements Screen, InputProcessor {
     private static String texturePath="skin_default.png";
     private Texture tempT;
     private float fadeTime=1;
-    private int levelI,uLevel;
+    private int levelI,uLevel,diffN;
     public boolean endTime=false;
 
     public void setMyGameCallback(MyGameCallback callback) {
@@ -94,8 +94,9 @@ public class GameScreen implements Screen, InputProcessor {
     }
     public GameScreen(final EcoRockGame game){this.game = game;}
 
-    public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong,int levelNum,int userLevel){
+    public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong,int levelNum,int userLevel,int diff){
         notesMissed=0;
+        diffN = diff;
         multiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(multiplexer);
         multiplexer.addProcessor(this);
@@ -177,11 +178,11 @@ public class GameScreen implements Screen, InputProcessor {
     }
     public void createNotes(){
         float posI=0;
-        double height=128;
+        double height=200;
         stage.act();
         stage.draw();
         for (int i = 0; i < secs.length; i++) {
-            height=128;
+            height=200;
             switch ((pos[i])){
                 case 1:
                     Vector2 t1C = touch1.localToStageCoordinates(new Vector2(0,0));
@@ -239,7 +240,7 @@ public class GameScreen implements Screen, InputProcessor {
             fadeTime-= delta * 0.7;
             music.setVolume(fadeTime);
         }
-         if(notesMissed==1){
+         if(notesMissed==diffN){
            music.stop();
           game.setScreen(new SongPickingScreen(game,""));
           return;

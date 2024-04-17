@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -21,9 +22,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -47,8 +51,8 @@ public class SongPickingScreen implements Screen, InputProcessor {
     private FileHandle chosenSongBeat,chosenSong;
     private Stage stage,tStage;
     private Table LevelList;
-    private Skin skin;
-    private TextureAtlas atlas;
+    private Skin skin,skin2;
+    private TextureAtlas atlas,atlas2;
     private Vector2 coord;
     private Sound sound1;
     private GameScreen gameScreen;
@@ -60,8 +64,10 @@ public class SongPickingScreen implements Screen, InputProcessor {
     private Label TutTXT;
     private String TutText="";
     private FileHandle fileHandle;
-    private Texture BGT,ButtonT;
+    private Texture BGT,ButtonT,settingsT,backT;
+    private CheckBox easy,medium,hard;
     private static boolean firstTime=true;
+    private int diff;
     private boolean helpB=false;
     public void setMyGameCallback(MyGameCallback callback) {
         myGameCallback = callback;
@@ -76,14 +82,32 @@ public class SongPickingScreen implements Screen, InputProcessor {
         multiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(multiplexer);
         multiplexer.addProcessor(this);
-        sound1 = Gdx.audio.newSound(Gdx.files.internal("chime.mp3"));
+        settingsT = new Texture(Gdx.files.internal("settings.png"));
+        backT = new Texture(Gdx.files.internal("backArrow.png"));
         atlas = new TextureAtlas("ui/arcade-ui.atlas");
+        atlas2 = new TextureAtlas("ui/checkBox-skin.atlas");
         skin = new Skin(Gdx.files.internal("ui/arcade-ui.json"),atlas);
+        skin2 = new Skin(Gdx.files.internal("ui/checkBox-skin.json"),atlas2);
         LevelList = new Table();
-        btnBack = new Button(skin);
-        btnHelp = new Button(skin);
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(settingsT));
+        Drawable drawable2 = new TextureRegionDrawable(new TextureRegion(backT));
+        btnBack = new ImageButton(drawable2);
+        btnHelp = new ImageButton(drawable);
         btnBack.setName("back");
         btnHelp.setName("help");
+        easy = new CheckBox("Easy",skin2);
+        easy.getLabel().setFontScale(2);
+        easy.getLabel().setColor(Color.BLACK);
+        easy.getLabelCell().padLeft(50);
+        easy.setChecked(true);
+        medium = new CheckBox("Medium",skin2);
+        medium.getLabel().setFontScale(2);
+        medium.getLabel().setColor(Color.BLACK);
+        medium.getLabelCell().padLeft(50);
+        hard = new CheckBox("Hard",skin2);
+        hard.getLabel().setFontScale(2);
+        hard.getLabel().setColor(Color.BLACK);
+        hard.getLabelCell().padLeft(50);
         scroll = new ScrollPane(LevelList);
         scroll.setScrollingDisabled(true,false);
         scroll.setFillParent(true);
@@ -95,8 +119,15 @@ public class SongPickingScreen implements Screen, InputProcessor {
         Table rootUi = new Table();
         rootUi.setFillParent(true);
         rootUi.top();
-        rootUi.add(btnHelp).size(200,200).align(Align.right).growX();
-        rootUi.add(btnBack).size(200,200).align(Align.left).growX();
+        rootUi.add(btnHelp).size(200,200).padLeft(-40);
+        rootUi.add(btnBack).size(200,200).padRight(80);
+       // rootUi.row();
+        Table checkBoxT = new Table();
+        checkBoxT.center();
+        checkBoxT.add(easy).size(50,50).growX().padRight(200);
+        checkBoxT.add(medium).size(50,50).growX().padRight(200);
+        checkBoxT.add(hard).size(50,50).growX();
+        rootUi.add(checkBoxT);
         stage.addActor(scroll);
         fileHandle = Gdx.files.internal("TutorialText.txt");
         TutText = fileHandle.readString();
@@ -251,6 +282,21 @@ public class SongPickingScreen implements Screen, InputProcessor {
         stage.getBatch().begin();
         stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         stage.getBatch().end();
+        if(easy.isChecked()){
+            diff=3;
+            medium.setChecked(false);
+            hard.setChecked(false);
+        }
+        if(medium.isChecked()){
+            diff=2;
+            easy.setChecked(false);
+            hard.setChecked(false);
+        }
+        if(hard.isChecked()){
+            diff=1;
+            medium.setChecked(false);
+            easy.setChecked(false);
+        }
         if(firstTime||helpB){
             stage.act();
             stage.draw();
@@ -336,62 +382,68 @@ public class SongPickingScreen implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         coord = stage.screenToStageCoordinates(new Vector2((float) screenX, (float) screenY));
         Actor hitButton = stage.hit(coord.x, coord.y, true);
-        Rectangle rectangle = new Rectangle();
-        rectangle.setPosition(coord.x, coord.y);
-        Rectangle hitRect = new Rectangle();
-        if (hitButton != null) hitRect.setPosition(hitButton.getX(), hitButton.getY());
-        hitRect.setSize(200, 200);
-        rectangle.setSize(200, 200);
+       // Rectangle rectangle = new Rectangle();
+        //rectangle.setPosition(coord.x, coord.y);
+        //Rectangle hitRect = new Rectangle();
+       // if (hitButton != null) hitRect.setPosition(hitButton.getX(), hitButton.getY());
+       // hitRect.setSize(200, 200);
+       // rectangle.setSize(200, 200);
         if (hitButton != null) {
+            if(hitButton.getName()!=null){
             switch (hitButton.getName()) {
-                case "back" :{
-                    if (myGameCallback != null) {
-                        myGameCallback.goBack();
-                    } else {
-                        Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
-                    }
-                    break;
-                }
-                case "help":
-                    helpB=true;
-                    Gdx.input.setInputProcessor(tStage);
-                    break;
                 case "level 1":
                     chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/HisTheme.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,1,numberOfLevels+1);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,1,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 2":
                     chosenSong = Gdx.files.internal("Songs/Pokemon Emerald Soundtrack #5 - Littleroot Town.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 3":
                     chosenSong = Gdx.files.internal("Songs/Zelda Main Theme Song.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/TLOZ.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 4":
                     chosenSong = Gdx.files.internal("Songs/Sonic The Hedgehog OST - Green Hill Zone.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/GreenHillZone.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 5":
                     chosenSong = Gdx.files.internal("Songs/Super Mario Odyssey - Jump Up, Super Star!.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 6":
                     chosenSong = Gdx.files.internal("Songs/il vento d'oro.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
+            }
+        }
+            else if (hitButton.getParent().getName()!=null) {
+                switch (hitButton.getParent().getName()) {
+                    case "back": {
+                        if (myGameCallback != null) {
+                            myGameCallback.goBack();
+                        } else {
+                            Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
+                        }
+                        break;
+                    }
+                    case "help":
+                        helpB = true;
+                        Gdx.input.setInputProcessor(tStage);
+                        break;
+                }
             }
         }
         return false;

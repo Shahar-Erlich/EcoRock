@@ -1,0 +1,28 @@
+
+selectbox-skin.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+199x-export
+  rotate: false
+  xy: 800, 798
+  size: 129, 129
+  orig: 129, 129
+  offset: 0, 0
+  index: -1
+button_bg
+  rotate: false
+  xy: 1, 479
+  size: 797, 448
+  split: 0, 0, 0, 0
+  orig: 797, 448
+  offset: 0, 0
+  index: -1
+title-export
+  rotate: false
+  xy: 1, 93
+  size: 384, 384
+  orig: 384, 384
+  offset: 0, 0
+  index: -1

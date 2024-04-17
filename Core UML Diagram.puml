@@ -1,0 +1,89 @@
+@startuml
+class SongPickingScreen {
+~ EcoRockGame game
+- ScrollPane scroll
+- FileHandle chosenSongBeat
+- Stage stage
+- Table LevelList
+- Skin skin
+- TextureAtlas atlas
+- Vector2 coord
+- Sound sound1
+- GameScreen gameScreen
+- Button btnBack
+- InputMultiplexer multiplexer
+- {static} MyGameCallback myGameCallback
+- {static} int numberOfLevels
+- TextButton end
+- Label TutTXT
+- String TutText
+- FileHandle fileHandle
+- Texture BGT
+- {static} boolean firstTime
+- boolean helpB
+}
+
+interface SongPickingScreen$MyGameCallback {
+}
+class beatProcessor {
+- String str
+- String[] general
+- float[] secs
+- Array<Float> longs
+- int[] pos
+- FileHandle file
+}
+
+class GameScreen {
+~ EcoRockGame game
+- {static} MyGameCallback myGameCallback
+- Sound sound1
+~ Stage stage
+- Array<Rectangle> notes
+- Vector2 coord
+- boolean RUNNING
+- Button touch1
+- Texture noteT
+- Music music
+- long startTime
+- Label done
+- float[] secs
+- Array<Float> longs
+- int[] pos
+- String key
+- FileHandle file
+- int Score
+- TextureAtlas atlas
+- Skin skin
+- TextButton resume
+- {static} int notesMissed
+- Label ScoreL
+- float touchStart
+- ProgressBar progressBar
+- InputMultiplexer multiplexer
+- Array<Integer> longInd
+- Array<Texture> noteTs
+- {static} String texturePath
+- Texture tempT
+- float fadeTime
+- int levelI
++ boolean endTime
+}
+
+interface GameScreen$MyGameCallback {
+}
+class EcoRockGame {
++ SpriteBatch batch
++ BitmapFont font
+}
+
+
+
+Screen <|.. SongPickingScreen
+InputProcessor <|.. SongPickingScreen
+SongPickingScreen +.. SongPickingScreen$MyGameCallback
+Screen <|.. GameScreen
+InputProcessor <|.. GameScreen
+GameScreen +.. GameScreen$MyGameCallback
+Game <|-- EcoRockGame
+@enduml

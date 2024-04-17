@@ -1,0 +1,171 @@
+@startuml
+class SignUpModule {
+~ User user
+~ Context context
+}
+
+class SignupPage {
+- EditText name
+- Button btn
+- repository repository
+- FirebaseFirestore db
+}
+
+interface SignupPage$Finish {
+}
+class AndroidLauncher {
+}
+class CustomPageTransformer {
+- {static} float MIN_SCALE
+}
+
+class User {
+- String name
+- int prof
+}
+
+class HomeScreen {
+- Button startGame
+}
+
+class AccountFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+- Button btnL
+- TextView mail
+- SharedPreferences sharedPreferences
+- Intent intent
+- LinearLayout ll
+- repository repository
+- String nameS
+- int iconS
+- FirebaseFirestore db
+- MainPage mainPage
+- ImageView prof
+- ActivityResultLauncher<Intent> activityLauncher
+}
+
+class MyDatabaseHelper {
+- Context context
+- {static} String DATABASE_NAME
+- {static} int DATABASE_VERSION
+- {static} String TABLE_NAME
+- {static} String COLUMN_ID
+- {static} String COLUMN_USERNAME
+- {static} String COLUMN_MAIL
+- {static} String COLUMN_PASSWORD
+}
+
+class LoginModule {
+~ User user
+~ Context context
+~ repository repository
+}
+
+class MyPagerAdapter {
+}
+class UpdateActivity {
+~ Button btnClose
+~ ImageButton icon
+~ EditText upname
+- FirebaseFirestore db
+~ String mailU
+~ ImageButton i1
+- int prof
+- Dialog dialog
+- com.ecorock.game.Repository.repository repository
+}
+
+interface UpdateActivity$Finish {
+}
+class MainFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+- Button btn
+- boolean Logged
+}
+
+class repository {
+~ MyDatabaseHelper helper
+}
+
+class GuitarTemplate {
+- int resource
+- String name
+- String filePath
+}
+
+class GuitarFragment {
+- {static} String ARG_COLUMN_COUNT
+- int mColumnCount
+- RecyclerView recyclerView
+}
+
+class MyGuitarRecyclerViewAdapter {
+- List<GuitarTemplate> mValues
+}
+
+class MyGuitarRecyclerViewAdapter$ViewHolder {
++ ImageButton imgB
++ TextView tv
++ GuitarTemplate mItem
+}
+
+class currentUser {
+- {static} String mail
+- {static} int icon
+}
+
+class MainPage {
+- ViewPager viewPager
+- {static} boolean LoggedIn
+- {static} int Level
+- int levelI
+- {static} FirebaseFirestore db
+- BottomNavigationView bottomNavigation
+~ LoginModule loginModule
+~ SharedPreferences sharedPreferences
+~ String mailS
+}
+
+class LoginPage {
+- EditText edMail
+- TextView forgot
+- Button btnL
+- repository repository
+- CheckBox rmmbr
+- boolean flag
+- FirebaseFirestore db
+}
+
+
+
+AppCompatActivity <|-- SignupPage
+SignupPage +.. SignupPage$Finish
+MyGameCallback <|.. AndroidLauncher
+MyGameCallback <|.. AndroidLauncher
+AndroidApplication <|-- AndroidLauncher
+PageTransformer <|.. CustomPageTransformer
+OnClickListener <|.. HomeScreen
+AppCompatActivity <|-- HomeScreen
+OnClickListener <|.. AccountFragment
+Fragment <|-- AccountFragment
+SQLiteOpenHelper <|-- MyDatabaseHelper
+FragmentPagerAdapter <|-- MyPagerAdapter
+OnClickListener <|.. UpdateActivity
+AppCompatActivity <|-- UpdateActivity
+UpdateActivity +.. UpdateActivity$Finish
+Fragment <|-- MainFragment
+Fragment <|-- GuitarFragment
+Adapter <|-- MyGuitarRecyclerViewAdapter
+MyGuitarRecyclerViewAdapter +.. MyGuitarRecyclerViewAdapter$ViewHolder
+OnClickListener <|.. MyGuitarRecyclerViewAdapter$ViewHolder
+ViewHolder <|-- MyGuitarRecyclerViewAdapter$ViewHolder
+AppCompatActivity <|-- MainPage
+OnClickListener <|.. LoginPage
+AppCompatActivity <|-- LoginPage
+@enduml

@@ -65,6 +65,10 @@ public class MainPage extends AppCompatActivity {
         if(sharedPreferences.getString("email","").equals("")&&currentUser.getMail()=="") {
             currentUser.setMail(sharedPreferences.getString("email", ""));
         }
+        else{
+            currentUser.setLevel(sharedPreferences.getInt("level", -1));
+            Level = currentUser.getLevel();
+        }
         mailS = currentUser.getMail();
         db=FirebaseFirestore.getInstance();
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

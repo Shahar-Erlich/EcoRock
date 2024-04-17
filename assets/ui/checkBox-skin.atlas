@@ -1,0 +1,51 @@
+
+checkBox-skin.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+199x-export
+  rotate: false
+  xy: 1, 33
+  size: 129, 129
+  orig: 129, 129
+  offset: 0, 0
+  index: -1
+button_bg
+  rotate: false
+  xy: 1, 550
+  size: 797, 448
+  split: 0, 0, 0, 0
+  orig: 797, 448
+  offset: 0, 0
+  index: -1
+title-export
+  rotate: false
+  xy: 1, 164
+  size: 384, 384
+  orig: 384, 384
+  offset: 0, 0
+  index: -1
+checkbox off
+  rotate: false
+  xy: 800, 705
+  size: 92, 91
+  split: 0, 0, 0, 0
+  orig: 92, 91
+  offset: 0, 0
+  index: -1
+checkbox on
+  rotate: false
+  xy: 387, 444
+  size: 104, 104
+  split: 0, 0, 0, 0
+  orig: 104, 104
+  offset: 0, 0
+  index: -1
+checkbox
+  rotate: false
+  xy: 800, 798
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
