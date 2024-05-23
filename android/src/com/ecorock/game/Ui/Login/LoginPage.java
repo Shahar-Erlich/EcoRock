@@ -47,7 +47,6 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
         edMail = findViewById(R.id.edName);
         edPass = findViewById(R.id.edPassword);
-        forgot = findViewById(R.id.forgotPass);
         signup = findViewById(R.id.signUp);
         btnL = findViewById(R.id.loginBtnR);
         rmmbr = findViewById(R.id.Rmmbrme);

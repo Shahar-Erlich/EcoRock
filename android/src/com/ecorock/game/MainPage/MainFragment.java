@@ -74,7 +74,6 @@ public class MainFragment extends Fragment {
                 if(Logged) {
                     Intent intent = new Intent(getActivity().getBaseContext(), AndroidLauncher.class);
                     intent.putExtra("level",mainPage.getUserLevel());
-                    intent.putExtra("firstTime",mainPage.getFirstTime());
                     startActivity(intent);
                 }
                 else{

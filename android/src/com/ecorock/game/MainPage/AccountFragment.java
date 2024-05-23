@@ -249,7 +249,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                Toast.makeText(getActivity().getBaseContext(), "lmao", Toast.LENGTH_SHORT).show();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {

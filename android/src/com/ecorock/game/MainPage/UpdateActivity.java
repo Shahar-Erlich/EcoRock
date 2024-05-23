@@ -119,7 +119,6 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void unused) {
-                                                                                Toast.makeText(UpdateActivity.this, "lmao", Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         })
                                                                         .addOnFailureListener(new OnFailureListener() {

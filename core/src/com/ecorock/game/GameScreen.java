@@ -178,11 +178,11 @@ public class GameScreen implements Screen, InputProcessor {
     }
     public void createNotes(){
         float posI=0;
-        double height=200;
+        double height=128;
         stage.act();
         stage.draw();
         for (int i = 0; i < secs.length; i++) {
-            height=200;
+            height=128;
             switch ((pos[i])){
                 case 1:
                     Vector2 t1C = touch1.localToStageCoordinates(new Vector2(0,0));
@@ -231,7 +231,6 @@ public class GameScreen implements Screen, InputProcessor {
             music.stop();
             eStage.act();
             eStage.draw();
-
         }
         if(RUNNING){
             timeSeconds +=Gdx.graphics.getDeltaTime();
@@ -295,7 +294,13 @@ public class GameScreen implements Screen, InputProcessor {
             else if(ended==false){
                 game.batch.begin();
                 for (Rectangle note : notes) {
-                    game.batch.draw(noteT, note.x, note.y, note.width, note.height);
+                    if(longInd.get(notes.indexOf(note,true))==1) {
+                        game.batch.draw(noteT, note.x, note.y, 200, note.height);
+                        game.batch.draw(noteTs.get(notes.indexOf(note, false)), note.x, note.y, 200, 200);
+                    }
+                    else{
+                        game.batch.draw(noteTs.get(notes.indexOf(note,false)), note.x, note.y, 200, 200);
+                    }
                 }
                 game.batch.end();
                 music.pause();
@@ -408,7 +413,6 @@ public class GameScreen implements Screen, InputProcessor {
                 } else {
                     Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
                 }
-                Gdx.app.log("Tag","asfasdf");
             }
         });
         stageS.addActor(songP);
@@ -436,7 +440,6 @@ public class GameScreen implements Screen, InputProcessor {
                 } else {
                     Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
                 }
-                Gdx.app.log("Tag","asfasdf");
             }
         });
         done = new Label("Clear!",skin);

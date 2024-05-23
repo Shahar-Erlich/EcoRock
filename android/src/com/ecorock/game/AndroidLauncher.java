@@ -21,7 +21,6 @@ public class AndroidLauncher extends AndroidApplication implements GameScreen.My
 		Intent intent = getIntent();
 		songPickingScreen.setMyGameCallback(this);
 		songPickingScreen.setNumberOfLevels(intent.getIntExtra("level",-1));
-		songPickingScreen.setFirstTime(intent.getBooleanExtra("firstTime",true));
 		initialize(new EcoRockGame(), config);
 	}
 
@@ -43,8 +42,4 @@ public class AndroidLauncher extends AndroidApplication implements GameScreen.My
 		startActivity(new Intent(AndroidLauncher.this, MainPage.class));
 	}
 
-	@Override
-	public void changeFirst(boolean b) {
-		MainPage.setFirstTime(b);
-	}
 }

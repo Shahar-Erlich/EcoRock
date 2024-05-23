@@ -36,7 +36,7 @@ import java.util.Map;
 public class MainPage extends AppCompatActivity {
 
     private ViewPager viewPager;
-    private static boolean LoggedIn,firstTime;
+    private static boolean LoggedIn;
     private static int Level=0;
     private int levelI,score;
     private static FirebaseFirestore db;
@@ -56,12 +56,15 @@ public class MainPage extends AppCompatActivity {
         bottomNavigation.setItemIconTintList(null);
         Intent intent = getIntent();
         loginModule = new LoginModule(new User("","",""),this);
+        sharedPreferences = getSharedPreferences("Main", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if(intent.hasExtra("level")) {
             Level = intent.getIntExtra("level", -1);
+            editor.putInt("level",Level);
+            editor.apply();
             levelI = intent.getIntExtra("levelI",-1);
             score = intent.getIntExtra("score",0);
         }
-        sharedPreferences = getSharedPreferences("Main", Context.MODE_PRIVATE);
         if(sharedPreferences.getString("email","").equals("")&&currentUser.getMail()=="") {
             currentUser.setMail(sharedPreferences.getString("email", ""));
         }
@@ -78,7 +81,6 @@ public class MainPage extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (document.getData().get("email").toString().equals(mailS)) {
                             String id = document.getId();
-                            firstTime = Boolean.parseBoolean(document.getData().get("firstTime").toString());
                             Map<String, Object> user = new HashMap<>();
                             if(score!=-1&&levelI!=-1){
                                 if(document.getData().get("levelScores." + String.valueOf(levelI))!=null) {
@@ -171,45 +173,6 @@ public class MainPage extends AppCompatActivity {
     }
     public int getUserLevel(){
         return Level;
-    }
-    public boolean getFirstTime(){
-        return firstTime;
-    }
-    public static void setFirstTime(boolean b){
-        firstTime = b;
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (document.getData().get("email").toString().equals(currentUser.getMail())) {
-                            String id = document.getId();
-                            firstTime = Boolean.parseBoolean(document.getData().get("firstTime").toString());
-                            if (Boolean.parseBoolean(document.getData().get("firstTime").toString()) !=b) {
-                                Map<String, Object> user = new HashMap<>();
-                                user.put("firstTime", b);
-                                // Add a new document with a generated ID
-                                db.collection("users")
-                                        .document(id).update(user)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                            }
-                                        });
-                            }
-                            else{
-                                firstTime = Boolean.parseBoolean(document.getData().get("firstTime").toString());
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
     public void setUserLevel(int l){
        Level = l;

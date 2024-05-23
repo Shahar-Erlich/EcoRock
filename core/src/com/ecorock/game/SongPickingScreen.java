@@ -44,7 +44,6 @@ import com.badlogic.gdx.audio.Sound;
 public class SongPickingScreen implements Screen, InputProcessor {
     public interface MyGameCallback {
         public void goBack();
-        public void changeFirst(boolean b);
     }
     final EcoRockGame game;
     private ScrollPane scroll;
@@ -66,7 +65,6 @@ public class SongPickingScreen implements Screen, InputProcessor {
     private FileHandle fileHandle;
     private Texture BGT,ButtonT,settingsT,backT;
     private CheckBox easy,medium,hard;
-    private static boolean firstTime=true;
     private int diff;
     private boolean helpB=false;
     public void setMyGameCallback(MyGameCallback callback) {
@@ -140,7 +138,6 @@ public class SongPickingScreen implements Screen, InputProcessor {
     public static void setNumberOfLevels(int l){
         numberOfLevels = l;
     }
-    public static void setFirstTime(boolean f){firstTime=f;}
     public void createList(Table LevelList){
         int levelNum = 1;
         Label songName,author;
@@ -297,7 +294,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
             medium.setChecked(false);
             easy.setChecked(false);
         }
-        if(firstTime||helpB){
+        if(helpB){
             stage.act();
             stage.draw();
             stage.getBatch().begin();
@@ -319,10 +316,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
         end.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event,float x,float y){
-                if(firstTime=true) {
-                    firstTime = false;
-                    myGameCallback.changeFirst(false);
-                }
+
                 if(helpB==true)
                 {
                     helpB=false;

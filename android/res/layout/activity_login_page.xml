@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/backgrounds_main"
     android:gravity="center"
     android:padding="16dp">
 
@@ -43,17 +44,6 @@
       android:layout_height="wrap_content"
       android:text="Login"
       android:layout_marginBottom="8dp"/>
-
-
-  <!-- Text for Forgot Password -->
-  <TextView
-      android:id="@+id/forgotPass"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Forgot Password?"
-      android:gravity="center"
-      android:clickable="true"
-      android:layout_marginBottom="16dp" />
 
   <!-- Text for Sign Up -->
   <TextView

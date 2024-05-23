@@ -89,7 +89,6 @@ public class SignupPage extends AppCompatActivity {
                             user.put("email", u.getMail());
                             user.put("level", 0);
                             user.put("prof", 1);
-                            user.put("firstTime",true);
                             user.put("levelScores",new ArrayList<Integer>());
                             // Add a new document with a generated ID
                             db.collection("users")
