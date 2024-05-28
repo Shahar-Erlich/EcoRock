@@ -59,41 +59,69 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if(v== signup){
+        // Check if the signup button is clicked
+        if (v == signup) {
+            // Start the SignupPage activity
             startActivity(new Intent(LoginPage.this, SignupPage.class));
         }
-        if(v == btnL){
+
+        // Check if the login button is clicked
+        if (v == btnL) {
+            // Get the email and password from the input fields
             String Email = edMail.getText().toString();
             String Pass = edPass.getText().toString();
-            User u = new User(Pass,Email);
-            LoginModule loginModule = new LoginModule(u,this);
+
+            // Create a new User object with the provided email and password
+            User u = new User(Pass, Email);
+
+            // Initialize a new LoginModule with the User object and the current context
+            LoginModule loginModule = new LoginModule(u, this);
+
+            // Access the Firestore database and get the collection of users
             db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful()) {
+                    // Check if the task is successful
+                    if (task.isSuccessful()) {
+                        // Iterate through the document snapshots in the result
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.getData().get("email").toString().equals(u.getMail()) && document.getData().get("pass").toString().equals(u.getPass())) {
+                            // Check if the email and password match
+                            if (document.getData().get("email").toString().equals(u.getMail()) &&
+                                    document.getData().get("pass").toString().equals(u.getPass())) {
+
+                                // Create an intent to start the MainPage activity
                                 Intent intent = new Intent(LoginPage.this, MainPage.class);
+
+                                // Set the user's name, profile icon, and level from the document
                                 u.setName(document.getData().get("name").toString());
                                 u.setProf(Integer.parseInt(document.getData().get("prof").toString()));
                                 u.setLevel(Integer.parseInt(document.getData().get("level").toString()));
+
+                                // Check if the remember me checkbox is checked
                                 if (rmmbr.isChecked()) {
-                                    loginModule.SharedPreferences(u.getName(), Email, Pass, u.getProf(),u.getLevel());
+                                    // Save the user details in shared preferences
+                                    loginModule.SharedPreferences(u.getName(), Email, Pass, u.getProf(), u.getLevel());
                                 } else {
+                                    // Remove the saved user details from shared preferences
                                     loginModule.removeDataSharedPreferences();
+
+                                    // Add user details to the intent
                                     intent.putExtra("username", u.getName());
                                     intent.putExtra("email", Email);
                                     intent.putExtra("password", Pass);
                                     intent.putExtra("prof", u.getProf());
-                                    intent.putExtra("level",u.getLevel());
-
-                                    //currentUser.setLevel(u.getLevel());
+                                    intent.putExtra("level", u.getLevel());
                                 }
+
+                                // Set the flag to true indicating a successful login
                                 flag = true;
+
+                                // Start the MainPage activity
                                 startActivity(intent);
                             }
                         }
-                        if (flag == false) {
+                        // If the flag is still false, show an error message
+                        if (!flag) {
                             Toast.makeText(getBaseContext(), "Invalid mail or password!", Toast.LENGTH_SHORT).show();
                         }
                     }

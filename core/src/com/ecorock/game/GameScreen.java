@@ -1,5 +1,5 @@
 package com.ecorock.game;
-
+// Importing necessary libraries from libGDX and Java
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -48,23 +48,27 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-public class GameScreen implements Screen, InputProcessor {
-    public interface MyGameCallback {
+
+public class GameScreen implements Screen, InputProcessor {// Main game screen class implementing libGDX's Screen and InputProcessor interfaces
+
+    public interface MyGameCallback { // Interface for callback methods to interact with the game
         public void goToMenu();
         public void levelEnd(int level,int score,int i);
     }
 
-    final EcoRockGame game;
-    // Local variable to hold the callback implementation
-    private static MyGameCallback myGameCallback;
+    final EcoRockGame game;// Reference to the main game class
+    private static MyGameCallback myGameCallback;// Local variable to hold the callback implementation
     private Sound sound1,sound2,sound3,sound4;
-    Stage stage,pStage,eStage;
-    private Array<Rectangle> notes;
-    private Vector2 coord;
-    private  boolean RUNNING,isDeleted=true,longPressed=false,ended=false;
-    private Button touch1,touch2,touch3,touch4, pause;
-    private Texture noteT,noteT2,BGT,ButtonT,appleT,canT,bagT,bananaT;
-    private Music music;
+    Stage stage,pStage,eStage; // Stages for different UI layers
+    private Array<Rectangle> notes;// Array to hold note rectangles
+    private Vector2 coord;// Coordinate vector for positioning
+    private  boolean RUNNING,isDeleted=true,longPressed=false,ended=false;// Game state flags
+    private Button touch1,touch2,touch3,touch4, pause;// Buttons for user input
+    private Texture noteT,noteT2,BGT,ButtonT,appleT,canT,bagT,bananaT;// Textures for graphics
+    private Music music;// Music for background score
+
+
+    // Timing and score variables
     private long startTime;
     private Label done;
     private float[] secs;
@@ -91,10 +95,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void setMyGameCallback(MyGameCallback callback) {
         myGameCallback = callback;
-    }
-    public GameScreen(final EcoRockGame game){this.game = game;}
+    }// Method to set the callback implementation
+    public GameScreen(final EcoRockGame game){this.game = game;}// Constructor to initialize game screen
 
-    public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong,int levelNum,int userLevel,int diff){
+    public GameScreen(final EcoRockGame gam,FileHandle chosenSongBeat,FileHandle chosenSong,int levelNum,int userLevel,int diff){// Overloaded constructor with additional parameters for game setup
         notesMissed=0;
         diffN = diff;
         multiplexer = new InputMultiplexer();
@@ -142,7 +146,6 @@ public class GameScreen implements Screen, InputProcessor {
         rootUi.row();
         int space =45;
         rootUi.add(pause).size(200,200).growX().align(Align.right);
-    //rootUi.add(ScoreL);
         root.add(touch1).size(200,200).pad(space);
         root.add(touch2).size(200,200).pad(space);
         root.add(touch3).size(200,200).pad(space);
@@ -171,89 +174,127 @@ public class GameScreen implements Screen, InputProcessor {
 
     public static void changeBGT(String path){
         texturePath = path;
-    }
+    }// Static method to change background texture
     @Override
     public void show() {
 
     }
-    public void createNotes(){
+    public void createNotes(){// Method to create and add notes to the game screen
         float posI=0;
         double height=128;
+
+        // Act and draw the stage to ensure it's updated
         stage.act();
         stage.draw();
+
+        // Iterate through each second in the secs array
         for (int i = 0; i < secs.length; i++) {
             height=128;
+            // Determine the position of the note based on the value in pos array
             switch ((pos[i])){
                 case 1:
+                    // Convert local touch coordinates to stage coordinates for touch1
                     Vector2 t1C = touch1.localToStageCoordinates(new Vector2(0,0));
                     posI = t1C.x;
                     break;
                 case 2:
+                    // Convert local touch coordinates to stage coordinates for touch2
                     Vector2 t2C = touch2.localToStageCoordinates(new Vector2(0,0));
                     posI = t2C.x;
                     break;
                 case 3:
+                    // Convert local touch coordinates to stage coordinates for touch3
                     Vector2 t3C = touch3.localToStageCoordinates(new Vector2(0,0));
                     posI = t3C.x;
                     break;
                 case 4:
+                    // Convert local touch coordinates to stage coordinates for touch4
                     Vector2 t4C = touch4.localToStageCoordinates(new Vector2(0,0));
                     posI = t4C.x;
                     break;
 
             }
+            // Determine the height of the note based on the value in longs array
             if(longs.get(i)!=0 && longs.get(i)*600>150){
                 height = Math.floor(longs.get(i)*600);
-                longInd.add(1);
+                longInd.add(1);// Mark as a long note
             }
             else{
-                longInd.add(0);
+                longInd.add(0);// Mark as a short note
             }
+            // Spawn the note with calculated position and height
         spawnNote(secs[i]*600,posI,(float)height);
         }
     }
     @Override
     public void render(float delta) {
+        // Clear the screen with the specified color
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+
+        // Begin drawing with the stage's batch
         stage.getBatch().begin();
         stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         stage.getBatch().end();
+
+        // Check if the music volume is 0 or less
         if(music.getVolume()<=0){
             if(ended==false){
+                // Add the event stage processor to the input multiplexer if the song has ended
                 multiplexer.addProcessor(eStage);
             }
+
+            // Draw the "noteT" texture on the screen
             stage.getBatch().begin();
             stage.getBatch().draw(noteT,0,resume.getY()-400,Gdx.graphics.getWidth(),Gdx.graphics.getHeight()/2);
             stage.getBatch().end();
+
+            // Update the status flags and stop the music
             ended=true;
             RUNNING=false;
             music.stop();
+
+            // Act and draw the end stage
             eStage.act();
             eStage.draw();
         }
+
+        // Update the timer if the game is running
         if(RUNNING){
             timeSeconds +=Gdx.graphics.getDeltaTime();
         }
+
+        // Fade out the music if more than 60 seconds have passed and the music is still playing
         if(timeSeconds>60&&music.isPlaying()){
             fadeTime-= delta * 0.7;
             music.setVolume(fadeTime);
         }
+
+        // Stop the game and switch screens if the number of missed notes equals the difficulty number
          if(notesMissed==diffN){
            music.stop();
           game.setScreen(new SongPickingScreen(game,""));
           return;
        }
+
+        // Game logic for updating and drawing notes
             if(RUNNING) {
-                progressBar.setValue((timeSeconds/120)*100);
+                // Update the progress bar value
+                progressBar.setValue((timeSeconds/60)*100);
+                // Act and draw the stage
                 stage.act();
                 stage.draw();
+
+
                 if(isDeleted==false){
+                    // Update the height and position of the note being removed
                     noteH=notes.get(removeNoteInd).getHeight();
                     noteY=notes.get(removeNoteInd).getY();
                     notes.get(removeNoteInd).setY(noteY+600*Gdx.graphics.getDeltaTime());
                     notes.get(removeNoteInd).setHeight(noteH-600*Gdx.graphics.getDeltaTime());
                     Score+=1;
+
+                    // Remove the note if its height is less than or equal to 1
                     if(notes.get(removeNoteInd).getHeight()<=1){
                         isDeleted=true;
                         notes.removeIndex(removeNoteInd);
@@ -262,6 +303,8 @@ public class GameScreen implements Screen, InputProcessor {
                         noteTs.removeIndex(removeNoteInd);
                     }
                 }
+
+                // Move the notes and handle notes that go off-screen
                 for (Rectangle note: notes) {
                     note.y -= 600 * Gdx.graphics.getDeltaTime();
                     if (note.y < -note.height) {
@@ -276,9 +319,13 @@ public class GameScreen implements Screen, InputProcessor {
                             notesMissed++;
                     }
                 }
+
+                // Begin drawing with the game batch
                 game.batch.begin();
+                // Draw the score on the screen
                 game.font.draw(game.batch, String.valueOf(Score),(Gdx.graphics.getWidth()/4),Gdx.graphics.getHeight());
-               // game.font.draw(game.batch, temp, 0, Gdx.graphics.getHeight());
+
+                // Draw the notes
                 for (Rectangle note : notes) {
                     if(longInd.get(notes.indexOf(note,true))==1){
                         game.batch.draw(noteT, note.x, note.y,200, note.height);
@@ -288,11 +335,14 @@ public class GameScreen implements Screen, InputProcessor {
                         game.batch.draw(noteTs.get(notes.indexOf(note,false)), note.x, note.y, 200, 200);
                     }
                 }
-               // game.batch.draw(ButtonT,Gdx.graphics.getWidth()-200,Gdx.graphics.getHeight()-200,200,200);
+                // End drawing with the game batch
                 game.batch.end();
             }
             else if(ended==false){
+                // Begin drawing with the game batch
                 game.batch.begin();
+
+                // Draw the notes
                 for (Rectangle note : notes) {
                     if(longInd.get(notes.indexOf(note,true))==1) {
                         game.batch.draw(noteT, note.x, note.y, 200, note.height);
@@ -302,8 +352,12 @@ public class GameScreen implements Screen, InputProcessor {
                         game.batch.draw(noteTs.get(notes.indexOf(note,false)), note.x, note.y, 200, 200);
                     }
                 }
+                // End drawing with the game batch
                 game.batch.end();
+                // Pause the music
                 music.pause();
+
+                // Draw the main stage and the paused stage
                 stage.draw();
                 pStage.act();
                 pStage.draw();
@@ -376,77 +430,96 @@ public class GameScreen implements Screen, InputProcessor {
         }
         return tempT;
     }
-    private void createPause(Stage stageS){
-        resume = new TextButton("Resume",skin);
-        resume.getLabel().setFontScale(1*Gdx.graphics.getDensity());
-        resume.setPosition(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()/2);
-        resume.setBounds(resume.getX(),Gdx.graphics.getHeight()/2,resume.getLabel().getWidth(),resume.getLabel().getHeight());
-        //music de-syncs
-        resume.addListener(new ClickListener(){
+    private void createPause(Stage stageS) {
+        // Method to create and set up the pause menu
+
+        // Create and set up the "Resume" button
+        resume = new TextButton("Resume", skin);
+        resume.getLabel().setFontScale(1 * Gdx.graphics.getDensity());
+        resume.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2);
+        resume.setBounds(resume.getX(), Gdx.graphics.getHeight() / 2, resume.getLabel().getWidth(), resume.getLabel().getHeight());
+
+        // Add listener to "Resume" button to resume the music and game
+        resume.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event,float x,float y){
+            public void clicked(InputEvent event, float x, float y) {
                 music.play();
-                RUNNING=true;
+                RUNNING = true;
                 Gdx.input.setInputProcessor(multiplexer);
             }
-             });
+        });
 
-        songP = new TextButton("Song Select",skin);
-        songP.getLabel().setFontScale(1*Gdx.graphics.getDensity());
-        songP.setPosition(resume.getX(),resume.getY()-200);
-        songP.setBounds(resume.getX(),resume.getY()-200,resume.getLabel().getWidth(),resume.getLabel().getHeight());
-        songP.addListener(new ClickListener(){
+
+        // Create and set up the "Song Select" button
+        songP = new TextButton("Song Select", skin);
+        songP.getLabel().setFontScale(1 * Gdx.graphics.getDensity());
+        songP.setPosition(resume.getX(), resume.getY() - 200);
+        songP.setBounds(resume.getX(), resume.getY() - 200, resume.getLabel().getWidth(), resume.getLabel().getHeight());
+
+        // Add listener to "Song Select" button to switch to the song picking screen
+        songP.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event,float x,float y){
-                game.setScreen(new SongPickingScreen(game,""));
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SongPickingScreen(game, ""));
             }
         });
-        mainMenu = new TextButton("Main Menu",skin);
-        mainMenu.getLabel().setFontScale(1*Gdx.graphics.getDensity());
-        mainMenu.setPosition(resume.getX(),resume.getY()-400);
-        mainMenu.setBounds(resume.getX(),resume.getY()-400,resume.getLabel().getWidth(),resume.getLabel().getHeight());
-        mainMenu.addListener(new ClickListener(){
+
+        // Create and set up the "Main Menu" button
+        mainMenu = new TextButton("Main Menu", skin);
+        mainMenu.getLabel().setFontScale(1 * Gdx.graphics.getDensity());
+        mainMenu.setPosition(resume.getX(), resume.getY() - 400);
+        mainMenu.setBounds(resume.getX(), resume.getY() - 400, resume.getLabel().getWidth(), resume.getLabel().getHeight());
+
+        // Add listener to "Main Menu" button to go back to the main menu
+        mainMenu.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event,float x,float y){
+            public void clicked(InputEvent event, float x, float y) {
                 if (myGameCallback != null) {
-                        myGameCallback.goToMenu();
+                    myGameCallback.goToMenu();
                 } else {
                     Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
                 }
             }
         });
+
+        // Add the buttons to the stage
         stageS.addActor(songP);
         stageS.addActor(resume);
         stageS.addActor(mainMenu);
     }
-    private void createEnd(Stage stageS){
+    private void createEnd(Stage stageS) {
+        // Method to create and set up the end game screen
 
-        end = new TextButton("Continue",skin);
-        end.getLabel().setFontScale(1*Gdx.graphics.getDensity());
-        end.setPosition(resume.getX(),resume.getY());
-        end.setBounds(resume.getX(),resume.getY()-300,resume.getLabel().getWidth(),resume.getLabel().getHeight());
-        end.addListener(new ClickListener(){
+        // Create and set up the "Continue" button
+        end = new TextButton("Continue", skin);
+        end.getLabel().setFontScale(1 * Gdx.graphics.getDensity());
+        end.setPosition(resume.getX(), resume.getY());
+        end.setBounds(resume.getX(), resume.getY() - 300, resume.getLabel().getWidth(), resume.getLabel().getHeight());
+
+        // Add listener to "Continue" button to handle end of level logic
+        end.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event,float x,float y){
+            public void clicked(InputEvent event, float x, float y) {
                 if (myGameCallback != null) {
-                    if(levelI>uLevel){
-                        uLevel=levelI;
-                        myGameCallback.levelEnd(uLevel,Score,levelI);
+                    // Update the user's level if the current level is higher than the unlocked level
+                    if (levelI > uLevel) {
+                        uLevel = levelI;
+                        myGameCallback.levelEnd(uLevel, Score, levelI);
+                    } else {
+                        myGameCallback.levelEnd(levelI, Score, levelI);
                     }
-                    else{
-                        myGameCallback.levelEnd(levelI,Score,levelI);
-                    }
-
                 } else {
                     Gdx.app.log("MyGame", "To use this class you must implement MyGameCallback!");
                 }
             }
         });
-        done = new Label("Clear!",skin);
-        done.setPosition((Gdx.graphics.getWidth()/8),3*(Gdx.graphics.getHeight()/4));
+
+        // Create and set up the "Clear!" label
+        done = new Label("Clear!", skin);
+        done.setPosition((Gdx.graphics.getWidth() / 8), 3 * (Gdx.graphics.getHeight() / 4));
         done.setFontScale(5);
-       // Table root = new Table();
-        //root.add(end);
+
+        // Add the label and button to the stage
         stageS.addActor(done);
         stageS.addActor(end);
     }
@@ -465,22 +538,29 @@ public class GameScreen implements Screen, InputProcessor {
         return false;
     }
 
-    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // Record the time when the touch down event occurs
         downT = timeSeconds;
-        longPressed=false;
-       // Gdx.app.log("Tag",pointer + "");
-        coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
+        longPressed = false;
+
+        // Convert screen coordinates to stage coordinates
+        coord = stage.screenToStageCoordinates(new Vector2((float) screenX, (float) screenY));
         Actor hitButton = stage.hit(coord.x, coord.y, true);
+
+        // Define rectangles for hitButton and notes for collision detection
         Rectangle rectangle = new Rectangle();
-        rectangle.setPosition(coord.x,coord.y);
+        rectangle.setPosition(coord.x, coord.y);
+        rectangle.setSize(200, 200);
         Rectangle hitRect = new Rectangle();
-        if(hitButton!=null)hitRect.setPosition(hitButton.getX(),hitButton.getY());
-        hitRect.setSize(200,200);
-        rectangle.setSize(200,200);
-        if(hitButton!=pause) {
+        if (hitButton != null) hitRect.setPosition(hitButton.getX(), hitButton.getY());
+        hitRect.setSize(200, 200);
+
+        // Check if the touch event is not on the pause button
+        if (hitButton != pause) {
             for (Rectangle note : notes) {
+                // Check for collision between the touch area and notes
                 if (rectangle.overlaps(hitRect) && hitRect.overlaps(note)) {
+                    // Determine the timing of the hit and update score accordingly
                     if (note.getY() < hitButton.getY() + 200 && note.getY() > hitButton.getY() + 100) {
                         WriteLog("Perfect!");
                         TimingScore = "perfect!";
@@ -493,45 +573,45 @@ public class GameScreen implements Screen, InputProcessor {
                         WriteLog("Missed!");
                         TimingScore = "missed!";
                     }
+                    // Handle long notes and remove short notes
                     if (note.getHeight() > 128) {
                         isDeleted = false;
-                     //   longPressed=true;
                         touchStart = timeSeconds;
                         removeNoteInd = notes.indexOf(note, false);
                     } else {
                         longs.removeIndex(notes.indexOf(note, false));
-                        longInd.removeIndex(notes.indexOf(note,false));
-                        noteTs.removeIndex(notes.indexOf(note,false));
+                        longInd.removeIndex(notes.indexOf(note, false));
+                        noteTs.removeIndex(notes.indexOf(note, false));
                         notes.removeValue(note, true);
                     }
-                    //  Gdx.app.log("MyTag", "Hit!");
                 }
             }
         }
-        if(hitButton!=null) {
-                switch (hitButton.getName()) {
-                    case "t1":
-                        key="1";
-                        break;
-                    case "t2":
-                        key="2";
-                        break;
-                    case "t3":
-                        key="3";
-                        break;
-                    case "t4":
-                        key="4";
-                        break;
-                    case "pause":
-                        RUNNING = false;
-                        Gdx.input.setInputProcessor(pStage);
-                        music.pause();
-                        break;
-                }
+
+        // Check if a button was touched and perform corresponding actions
+        if (hitButton != null) {
+            switch (hitButton.getName()) {
+                case "t1":
+                    key = "1";
+                    break;
+                case "t2":
+                    key = "2";
+                    break;
+                case "t3":
+                    key = "3";
+                    break;
+                case "t4":
+                    key = "4";
+                    break;
+                case "pause":
+                    // Pause the game and switch input processor to pause stage
+                    RUNNING = false;
+                    Gdx.input.setInputProcessor(pStage);
+                    music.pause();
+                    break;
             }
+        }
         return false;
-
-
     }
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {

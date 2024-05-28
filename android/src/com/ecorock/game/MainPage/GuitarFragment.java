@@ -51,21 +51,30 @@ public class GuitarFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_guitar_list, container, false);
 
-        // Set the adapter
+
+        // Check if the inflated view is a RecyclerView
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
+
+            // Set the layout manager for the RecyclerView based on the column count
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
+
+            // Set the adapter for the RecyclerView with a list of guitar templates
             recyclerView.setAdapter(new MyGuitarRecyclerViewAdapter(GuitarTemplate.getList()));
         }
+
+
+        // Return the view
         return view;
     }
 }

@@ -48,32 +48,54 @@ public class MainPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
-        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(),getWindow().getDecorView());
+
+
+        // Hide system bars and set behavior to show them transiently by swipe
+        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
         windowInsetsControllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+
+        // Initialize ViewPager and BottomNavigationView
         viewPager = findViewById(R.id.viewPager);
         bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setItemIconTintList(null);
+
+
+        // Get intent and initialize login module
         Intent intent = getIntent();
-        loginModule = new LoginModule(new User("","",""),this);
+        loginModule = new LoginModule(new User("", "", ""), this);
+
+        // Initialize shared preferences
         sharedPreferences = getSharedPreferences("Main", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        if(intent.hasExtra("level")) {
+
+
+        // Handle incoming intent extras
+        if (intent.hasExtra("level")) {
             Level = intent.getIntExtra("level", -1);
-            editor.putInt("level",Level);
+            editor.putInt("level", Level);
             editor.apply();
-            levelI = intent.getIntExtra("levelI",-1);
-            score = intent.getIntExtra("score",0);
+            levelI = intent.getIntExtra("levelI", -1);
+            score = intent.getIntExtra("score", 0);
         }
-        if(sharedPreferences.getString("email","").equals("")&&currentUser.getMail()=="") {
+
+        // Check and set current user email from shared preferences
+        if (sharedPreferences.getString("email", "").equals("") && currentUser.getMail().equals("")) {
             currentUser.setMail(sharedPreferences.getString("email", ""));
-        }
-        else{
+        } else {
             currentUser.setLevel(sharedPreferences.getInt("level", -1));
             Level = currentUser.getLevel();
         }
+
+
+        // Set mailS to current user's email
         mailS = currentUser.getMail();
-        db=FirebaseFirestore.getInstance();
+
+        // Initialize Firestore database instance
+        db = FirebaseFirestore.getInstance();
+
+
+        // Update user data in Firestore
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -82,53 +104,63 @@ public class MainPage extends AppCompatActivity {
                         if (document.getData().get("email").toString().equals(mailS)) {
                             String id = document.getId();
                             Map<String, Object> user = new HashMap<>();
-                            if(score!=-1&&levelI!=-1){
-                                if(document.getData().get("levelScores." + String.valueOf(levelI))!=null) {
-                                    if(Integer.parseInt(document.getData().get("levelScores." + String.valueOf(levelI)).toString())<score) {
-                                        user.put("levelScores." + String.valueOf(levelI), score);
+
+                            // Update level scores if conditions are met
+                            if (score != -1 && levelI != -1) {
+                                if (document.getData().get("levelScores." + levelI) != null) {
+                                    if (Integer.parseInt(document.getData().get("levelScores." + levelI).toString()) < score) {
+                                        user.put("levelScores." + levelI, score);
                                     }
-                                }
-                                else{
-                                    user.put("levelScores." + String.valueOf(levelI), score);
+                                } else {
+                                    user.put("levelScores." + levelI, score);
                                 }
                             }
+
+                            // Update level if conditions are met
                             if (Integer.parseInt(document.getData().get("level").toString()) < Level) {
                                 user.put("level", Level);
-                            }
-                            else{
+                            } else {
                                 Level = Integer.parseInt(document.getData().get("level").toString());
                             }
-                                // Add a new document with a generated ID
-                                db.collection("users")
-                                        .document(id).update(user)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                            }
-                                        });
+
+                            // Update Firestore document
+                            db.collection("users").document(id).update(user)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            // Handle success
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Handle failure
+                                        }
+                                    });
                         }
                     }
                 }
             }
         });
+
         // Attach the adapter to the ViewPager
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+
+        // Set the starting fragment to be the middle one
         viewPager.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 viewPager.getViewTreeObserver().removeOnPreDrawListener(this);
-                // Set the starting fragment to be the middle one
                 viewPager.setCurrentItem(1);
                 return true;
             }
         });
+
+
+        // Set page transformer for ViewPager
         viewPager.setPageTransformer(true, new CustomPageTransformer());
+
 
         // Set up BottomNavigationView to handle item selection
         bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

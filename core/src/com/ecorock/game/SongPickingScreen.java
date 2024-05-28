@@ -138,17 +138,26 @@ public class SongPickingScreen implements Screen, InputProcessor {
     public static void setNumberOfLevels(int l){
         numberOfLevels = l;
     }
-    public void createList(Table LevelList){
+    public void createList(Table LevelList){ // Method to create and populate the level list
         int levelNum = 1;
         Label songName,author;
         Image lvlImage;
 
         Table temp;
+
+        // Iterate through each level
         for (int i = 0; i < numberOfLevels+1; i++) {
+
+            // Load level image
             lvlImage = new Image(new Texture(Gdx.files.internal("LevelImages/Level " + levelNum +".png")));
             lvlImage.setName("level " + levelNum);
+
+            // Add level image to the level list table
             LevelList.add(lvlImage).width(400).height(400);
+
+            // Create a temporary table for level details
         switch (levelNum) {
+            // Populate level details based on the level number
             case 1:
                 temp = new Table();
                 songName = new Label("His Theme", skin);
@@ -274,61 +283,73 @@ public class SongPickingScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
+        // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ScreenUtils.clear(0, 0, 0.2f, 1);
+
+        // Draw the background texture
         stage.getBatch().begin();
-        stage.getBatch().draw(BGT,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        stage.getBatch().draw(BGT, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage.getBatch().end();
-        if(easy.isChecked()){
-            diff=3;
+
+        // Check difficulty settings and update accordingly
+        if (easy.isChecked()) {
+            diff = 3;
             medium.setChecked(false);
             hard.setChecked(false);
         }
-        if(medium.isChecked()){
-            diff=2;
+        if (medium.isChecked()) {
+            diff = 2;
             easy.setChecked(false);
             hard.setChecked(false);
         }
-        if(hard.isChecked()){
-            diff=1;
+        if (hard.isChecked()) {
+            diff = 1;
             medium.setChecked(false);
             easy.setChecked(false);
         }
-        if(helpB){
+
+        // Check if help button is pressed and render help stage if true
+        if (helpB) {
             stage.act();
             stage.draw();
             stage.getBatch().begin();
-            stage.getBatch().draw(ButtonT,0,end.getY(),Gdx.graphics.getWidth(),TutTXT.getHeight());
+            stage.getBatch().draw(ButtonT, 0, end.getY(), Gdx.graphics.getWidth(), TutTXT.getHeight());
             stage.getBatch().end();
             tStage.act();
             tStage.draw();
-        }
-        else {
+        } else {
+            // Render the main stage
             stage.act();
             stage.draw();
         }
     }
-    public void createTut(Stage stageS){
-        end = new TextButton("Continue",skin);
-        end.getLabel().setFontScale(1*Gdx.graphics.getDensity());
-        end.setPosition(Gdx.graphics.getWidth()/2-4,Gdx.graphics.getHeight()/10);
-        end.setBounds(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()/10,end.getLabel().getWidth(),end.getLabel().getHeight());
-        end.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event,float x,float y){
+    public void createTut(Stage stageS) {
+        // Method to create and set up the tutorial screen
 
-                if(helpB==true)
-                {
-                    helpB=false;
+        // Create and set up the "Continue" button
+        end = new TextButton("Continue", skin);
+        end.getLabel().setFontScale(1 * Gdx.graphics.getDensity());
+        end.setPosition(Gdx.graphics.getWidth() / 2 - 4, Gdx.graphics.getHeight() / 10);
+        end.setBounds(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 10, end.getLabel().getWidth(), end.getLabel().getHeight());
+
+        // Add listener to "Continue" button to close the tutorial screen and switch input processor
+        end.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (helpB) {
+                    helpB = false;
                 }
-            Gdx.input.setInputProcessor(multiplexer);
+                Gdx.input.setInputProcessor(multiplexer);
             }
         });
-        TutTXT = new Label(TutText,skin);
-        TutTXT.setPosition(0,end.getY()+100);
-        TutTXT.setFontScale(Gdx.graphics.getHeight()/3000f);
-        // Table root = new Table();
-        //root.add(end);
+
+        // Create and set up the tutorial text label
+        TutTXT = new Label(TutText, skin);
+        TutTXT.setPosition(0, end.getY() + 100);
+        TutTXT.setFontScale(Gdx.graphics.getHeight() / 3000f);
+
+        // Add the label and button to the stage
         stageS.addActor(TutTXT);
         stageS.addActor(end);
     }
@@ -374,16 +395,25 @@ public class SongPickingScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+        // Convert screen coordinates to stage coordinates
         coord = stage.screenToStageCoordinates(new Vector2((float) screenX, (float) screenY));
+        // Get the actor that was hit by the touch event
         Actor hitButton = stage.hit(coord.x, coord.y, true);
+
        // Rectangle rectangle = new Rectangle();
         //rectangle.setPosition(coord.x, coord.y);
         //Rectangle hitRect = new Rectangle();
        // if (hitButton != null) hitRect.setPosition(hitButton.getX(), hitButton.getY());
        // hitRect.setSize(200, 200);
        // rectangle.setSize(200, 200);
+
+        // Check if the hit actor is not null
         if (hitButton != null) {
+            // Check if the hit actor has a name (level button)
             if(hitButton.getName()!=null){
+
+                // Load chosen song and beatmap based on the level button pressed
             switch (hitButton.getName()) {
                 case "level 1":
                     chosenSong = Gdx.files.internal("Songs/Undertale OST_ 090 - His Theme.mp3");
@@ -423,8 +453,11 @@ public class SongPickingScreen implements Screen, InputProcessor {
                     break;
             }
         }
+
+            // If hitButton doesn't have a name, check its parent's name (e.g., back or help button)
             else if (hitButton.getParent().getName()!=null) {
                 switch (hitButton.getParent().getName()) {
+                    // Go back if the back button is pressed
                     case "back": {
                         if (myGameCallback != null) {
                             myGameCallback.goBack();
@@ -433,6 +466,7 @@ public class SongPickingScreen implements Screen, InputProcessor {
                         }
                         break;
                     }
+                    // Show help screen if the help button is pressed
                     case "help":
                         helpB = true;
                         Gdx.input.setInputProcessor(tStage);

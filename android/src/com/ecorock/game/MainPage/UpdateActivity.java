@@ -51,23 +51,34 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
-        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(),getWindow().getDecorView());
+
+        // Hide system bars and set behavior to show them transiently by swipe
+        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
         windowInsetsControllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+
+
+        // Get intent extras
         Intent intentG = getIntent();
         nameS = intentG.getStringExtra("name");
         mailS = intentG.getStringExtra("mail");
         passS = intentG.getStringExtra("pass");
-        prof = intentG.getIntExtra("prof",1);
+        prof = intentG.getIntExtra("prof", 1);
+
+        // Initialize UI elements
         btnUpdate = findViewById(R.id.btnUpdate);
-        btnClose= findViewById(R.id.btnCancel);
+        btnClose = findViewById(R.id.btnCancel);
         upname = findViewById(R.id.editTextName);
         upmail = findViewById(R.id.editTextEmail);
         uppass = findViewById(R.id.editTextPassword);
+        icon = findViewById(R.id.imageSelect);
+
+        // Set initial text for EditText fields
         upname.setText(nameS);
         upmail.setText(mailS);
         uppass.setText(passS);
-        icon = findViewById(R.id.imageSelect);
+
+        // Set initial profile icon based on the prof value
         switch (prof){
             case 1:
                 icon.setImageResource(R.drawable.defaulticondrawing);
@@ -82,15 +93,20 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                 icon.setImageResource(R.drawable.yugi_icon);
                 break;
         }
-        db=FirebaseFirestore.getInstance();
+
+        // Initialize Firestore and repository
+        db = FirebaseFirestore.getInstance();
         repository = new repository(UpdateActivity.this);
+        // Set onClickListener for the update button
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mailU = upmail.getText().toString();
                 nameU = upname.getText().toString();
                 passU = uppass.getText().toString();
-                    checkMailExists(new Finish() {
+
+                // Check if the email or name already exists
+                checkMailExists(new Finish() {
                                         @Override
                                         public void onReady(boolean nameExists, boolean emailExists) {
                                             if (nameExists) {
@@ -101,6 +117,8 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                                                 upmail.setError("Email Already Exists!");
                                                 return;
                                             }
+
+                                            // Update Firestore document with new user details
                                             db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -113,7 +131,7 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                                                                 user.put("pass", passU);
                                                                 user.put("email", mailU);
                                                                 user.put("prof",prof);
-                                                                // Add a new document with a generated ID
+                                                                // Update the document
                                                                 db.collection("users")
                                                                         .document(id).update(user)
                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -131,27 +149,37 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                                                     }
                                                 }
                                             });
+                                            // Prepare intent with updated details and set the result
                                             Intent intent = new Intent();
-                                            intent.putExtra("Nname",nameU);
-                                            intent.putExtra("Nmail",mailU);
-                                            intent.putExtra("Npass",passU);
-                                            intent.putExtra("Nicon",prof);
+                                            intent.putExtra("Nname", nameU);
+                                            intent.putExtra("Nmail", mailU);
+                                            intent.putExtra("Npass", passU);
+                                            intent.putExtra("Nicon", prof);
+
+                                            // Update current user details
                                             currentUser.setMail(mailU);
                                             currentUser.setName(nameU);
                                             currentUser.setPassword(passU);
                                             currentUser.setIcon(prof);
-                                            setResult(78,intent);
+
+                                            // Set result and finish activity
+                                            setResult(78, intent);
                                             UpdateActivity.super.onBackPressed();
                                         }
                                     },nameU,mailU);
     }
     });
+
+        // Set onClickListener for the icon picker
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 iconPicker();
             }
         });
+
+
+        // Set onClickListener for the close button
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,20 +236,26 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
     private void checkMailExists(Finish finish, String Name, String Mail){
+        // Access the Firestore database and get the collection of users
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                boolean E=false,N=false;
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
-                        if(documentSnapshot.getData().get("email").equals(Mail)&&!documentSnapshot.getData().get("email").equals(mailS)){
-                            E = true;
+                boolean emailExists = false, nameExists = false;
+                // Check if the task is successful
+                if (task.isSuccessful()) {
+                    // Iterate through the document snapshots in the result
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        // Check if the email exists and is different from the current user's email
+                        if (documentSnapshot.getData().get("email").equals(Mail) && !documentSnapshot.getData().get("email").equals(mailS)) {
+                            emailExists = true;
                         }
-                        if(documentSnapshot.getData().get("name").equals(Name)&&!documentSnapshot.getData().get("name").equals(nameS)){
-                            N = true;
+                        // Check if the name exists and is different from the current user's name
+                        if (documentSnapshot.getData().get("name").equals(Name) && !documentSnapshot.getData().get("name").equals(nameS)) {
+                            nameExists = true;
                         }
                     }
-                    finish.onReady(N,E);
+                    // Call the onReady method of the Finish interface with the results
+                    finish.onReady(nameExists, emailExists);
                 }
             }
         });

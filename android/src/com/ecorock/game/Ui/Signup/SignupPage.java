@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ecorock.game.MainPage.UpdateActivity;
 import com.ecorock.game.R;
 import com.ecorock.game.Ui.Login.LoginPage;
 import com.ecorock.game.User;
@@ -46,9 +47,12 @@ public class SignupPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_page);
-        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(),getWindow().getDecorView());
+        // Hide the system bars for an immersive experience
+        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
         windowInsetsControllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+
+        // Initialize UI components
         name = findViewById(R.id.edSignUpName);
         email = findViewById(R.id.edSignUpEmail);
         pass = findViewById(R.id.edSignUpPassword);
@@ -56,57 +60,76 @@ public class SignupPage extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
+        // Get context and initialize repository
         Context c = this;
         repository = new repository(this);
+
+        // Set onClickListener for the sign-up button
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                // Get the entered details
                 String Email = email.getText().toString();
                 String Name = name.getText().toString();
                 String Pass = pass.getText().toString();
-                User u = new User(Name,Email,Pass);
+
+                // Create a new User object
+                User u = new User(Name, Email, Pass);
+                // Initialize the SignUpModule with the User object and context
                 SignUpModule s = new SignUpModule(u,c);
-                if(s.Check_User(name,email,pass))
-                {
+
+                // Check if the user input is valid
+                if (s.Check_User(name, email, pass)) {
+                    // Check if the email or username already exists in the database
                     checkMailExists(new Finish() {
                         @Override
                         public void onReady(boolean nameExists, boolean emailExists) {
-                            if(nameExists){
+                            // Handle existing username
+                            if (nameExists) {
                                 name.setError("Username Already Exists!");
                                 return;
                             }
-                            if(emailExists){
+                            // Handle existing email
+                            if (emailExists) {
                                 email.setError("Email Already Exists!");
                                 return;
                             }
+
+                            // Clear the input fields
                             pass.setText("");
                             name.setText("");
                             email.setText("");
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("name", u.getName());
-                            user.put("pass", u.getPass());
-                            user.put("email", u.getMail());
-                            user.put("level", 0);
-                            user.put("prof", 1);
-                            user.put("levelScores",new ArrayList<Integer>());
-                            // Add a new document with a generated ID
+
+                            // Create a map to store user details
+                            Map<String, Object> userMap = new HashMap<>();
+                            userMap.put("name", u.getName());
+                            userMap.put("pass", u.getPass());
+                            userMap.put("email", u.getMail());
+                            userMap.put("level", 0);
+                            userMap.put("prof", 1);
+                            userMap.put("levelScores", new ArrayList<Integer>());
+
+                            // Add the user to the Firestore database
                             db.collection("users")
-                                    .add(user)
+                                    .add(userMap)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
+                                            // Handle success
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
+                                            // Handle failure
                                         }
                                     });
-                            //repository.addUser(u);
+
+                            // Start the LoginPage activity
                             startActivity(new Intent(SignupPage.this, LoginPage.class));
                         }
-                    }, Name,Email);
+                    }, Name, Email);
 
 
                 }
@@ -114,21 +137,27 @@ public class SignupPage extends AppCompatActivity {
             }
         });
     }
-    private void checkMailExists(Finish finish,String Name,String Mail){
+    private void checkMailExists(Finish finish, String Name, String Mail){
+        // Access the Firestore database and get the collection of users
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                boolean E=false,N=false;
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
-                        if(documentSnapshot.getData().get("email").equals(Mail)){
-                            E = true;
+                boolean emailExists = false, nameExists = false;
+                // Check if the task is successful
+                if (task.isSuccessful()) {
+                    // Iterate through the document snapshots in the result
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        // Check if the email exists and is different from the current user's email
+                        if (documentSnapshot.getData().get("email").equals(Mail) && !documentSnapshot.getData().get("email").equals(Mail)) {
+                            emailExists = true;
                         }
-                        if(documentSnapshot.getData().get("name").equals(Name)){
-                            N = true;
+                        // Check if the name exists and is different from the current user's name
+                        if (documentSnapshot.getData().get("name").equals(Name) && !documentSnapshot.getData().get("name").equals(Name)) {
+                            nameExists = true;
                         }
                     }
-                    finish.onReady(N,E);
+                    // Call the onReady method of the Finish interface with the results
+                    finish.onReady(nameExists, emailExists);
                 }
             }
         });

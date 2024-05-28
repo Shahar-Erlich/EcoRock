@@ -10,17 +10,25 @@ import com.ecorock.game.Ui.MainPage.HomeScreen;
 
 public class AndroidLauncher extends AndroidApplication implements GameScreen.MyGameCallback,SongPickingScreen.MyGameCallback{
 	@Override
-	protected void onCreate (Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Create configuration for the Android application
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		config.useAccelerometer = false;
-		config.useCompass = false;
+		config.useAccelerometer = false; // Disable accelerometer
+		config.useCompass = false; // Disable compass
+
+		// Create instances of GameScreen and SongPickingScreen
 		GameScreen gameScreen = new GameScreen(new EcoRockGame());
-		gameScreen.setMyGameCallback(this);
+		gameScreen.setMyGameCallback(this); // Set callback for GameScreen
 		SongPickingScreen songPickingScreen = new SongPickingScreen(new EcoRockGame());
+		songPickingScreen.setMyGameCallback(this); // Set callback for SongPickingScreen
+
+		// Retrieve intent to get the number of levels
 		Intent intent = getIntent();
-		songPickingScreen.setMyGameCallback(this);
-		songPickingScreen.setNumberOfLevels(intent.getIntExtra("level",-1));
+		songPickingScreen.setNumberOfLevels(intent.getIntExtra("level", -1)); // Set the number of levels in SongPickingScreen
+
+		// Initialize the EcoRockGame with the given configuration
 		initialize(new EcoRockGame(), config);
 	}
 

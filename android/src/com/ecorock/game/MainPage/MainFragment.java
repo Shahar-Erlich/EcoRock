@@ -61,22 +61,32 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Find the play button in the inflated view
         btn = view.findViewById(R.id.playButton);
-        MainPage mainPage = (MainPage)requireActivity();
+
+
+        // Get the MainPage activity to access its methods and properties
+        MainPage mainPage = (MainPage) requireActivity();
+
+        // Set an OnClickListener for the play button
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Logged= mainPage.getLoggedIn();
-                if(Logged) {
+                // Check if the user is logged in
+                Logged = mainPage.getLoggedIn();
+
+                if (Logged) {
+                    // If logged in, start the AndroidLauncher activity and pass the user level
                     Intent intent = new Intent(getActivity().getBaseContext(), AndroidLauncher.class);
-                    intent.putExtra("level",mainPage.getUserLevel());
+                    intent.putExtra("level", mainPage.getUserLevel());
                     startActivity(intent);
                 }
                 else{
+                    // If not logged in, show a toast message prompting the user to log in first
                     Toast.makeText(requireContext(), "Log in first to play!", Toast.LENGTH_SHORT).show();
                 }
             }
