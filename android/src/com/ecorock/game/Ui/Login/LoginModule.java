@@ -5,19 +5,16 @@ import android.content.SharedPreferences;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.ecorock.game.Repository.repository;
 import com.ecorock.game.User;
 
 public class LoginModule {
 
     User user;
     Context context;
-    repository repository;
     public LoginModule(User u, Context c)
     {
         this.user = u;
         this.context = c;
-        repository = new repository(context);
     }
     public boolean Check_User(EditText etEmail, EditText etPassword)
     {
@@ -47,9 +44,6 @@ public class LoginModule {
             etEmail.setError("invalid email (.com/.co)");
             return false;
         }
-
-
-
         //password validity checkups
         if(etPassword.getText().toString().equals(""))
         {
@@ -83,8 +77,5 @@ public class LoginModule {
         editor.remove("prof");
         editor.remove("level");
         editor.apply();
-    }
-    public User getUser(String Mail){
-        return repository.findUserByMail(Mail);
     }
 }

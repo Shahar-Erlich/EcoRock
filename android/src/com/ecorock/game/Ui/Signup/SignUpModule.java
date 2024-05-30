@@ -5,7 +5,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ecorock.game.User;
-import com.ecorock.game.Repository.repository;
 
 public class SignUpModule {
         User user;
@@ -17,7 +16,6 @@ public class SignUpModule {
         }
         public boolean Check_User(EditText etUser, EditText etEmail, EditText etPassword)
         {
-            repository repository = new repository(context);
             // username validity checkups
             if(etUser.getText().toString().isEmpty())
             {

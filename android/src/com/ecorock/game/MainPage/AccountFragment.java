@@ -31,7 +31,6 @@ import com.ecorock.game.Ui.Login.LoginPage;
 import com.ecorock.game.Ui.MainPage.HomeScreen;
 import com.ecorock.game.Ui.Signup.SignupPage;
 import com.ecorock.game.User;
-import com.ecorock.game.Repository.repository;
 import com.ecorock.game.currentUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -63,7 +62,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences sharedPreferences;
     private Intent intent;
     private LinearLayout ll;
-    private repository repository;
     private  String nameS="",mailS="",passS="";
     private int iconS=1,levelS;
     private FirebaseFirestore db;
@@ -156,8 +154,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
         // Retrieve the intent that started this activity
         intent = getActivity().getIntent();
-        // Initialize the repository
-        repository = new repository(getActivity().getBaseContext());
 
         // Check if the intent has extra data
         if (intent.hasExtra("username")) {

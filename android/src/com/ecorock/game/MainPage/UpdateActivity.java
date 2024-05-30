@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.ecorock.game.R;
-import com.ecorock.game.Repository.repository;
 import com.ecorock.game.Ui.Login.LoginModule;
 import com.ecorock.game.Ui.Signup.SignUpModule;
 import com.ecorock.game.Ui.Signup.SignupPage;
@@ -43,7 +42,6 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
     ImageButton i1,i2,i3,i4;
     private int prof=1;
     private  Dialog dialog;
-    private com.ecorock.game.Repository.repository repository;
     private interface Finish{
         void onReady(boolean nameExists,boolean emailExists);
     }
@@ -94,9 +92,8 @@ public class UpdateActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
 
-        // Initialize Firestore and repository
+        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
-        repository = new repository(UpdateActivity.this);
         // Set onClickListener for the update button
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,0 +1,241 @@
+@startuml
+class SignUpModule {
+~ User user
+~ Context context
++ boolean Check_User(EditText,EditText,EditText)
+}
+
+
+class SignupPage {
+- EditText name
+- Button btn
+- FirebaseFirestore db
+# void onCreate(Bundle)
+- void checkMailExists(Finish,String,String)
+}
+
+
+interface SignupPage$Finish {
+~ void onReady(boolean,boolean)
+}
+
+class AndroidLauncher {
+# void onCreate(Bundle)
++ void goToMenu()
++ void levelEnd(int,int,int)
++ void goBack()
+}
+
+class CustomPageTransformer {
+- {static} float MIN_SCALE
++ void transformPage(View,float)
+}
+
+
+class User {
+- String name
+- int prof
++ int getLevel()
++ void setLevel(int)
++ int getProf()
++ void setProf(int)
++ String getName()
++ void setName(String)
++ String getPass()
++ void setPass(String)
++ String getMail()
++ void setMail(String)
+}
+
+
+class HomeScreen {
+- Button startGame
+# void onCreate(Bundle)
++ void onClick(View)
+}
+
+
+class AccountFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+- Button btnL
+- TextView mail
+- SharedPreferences sharedPreferences
+- Intent intent
+- LinearLayout ll
+- String nameS
+- int iconS
+- FirebaseFirestore db
+- MainPage mainPage
+- ImageView prof
+- ActivityResultLauncher<Intent> activityLauncher
++ {static} AccountFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void setProfPic(int)
++ void onClick(View)
+}
+
+
+class LoginModule {
+~ User user
+~ Context context
++ boolean Check_User(EditText,EditText)
++ void SharedPreferences(String,String,String,int,int)
++ void removeDataSharedPreferences()
+}
+
+
+class MyPagerAdapter {
++ Fragment getItem(int)
++ int getCount()
+}
+
+class UpdateActivity {
+~ Button btnClose
+~ ImageButton icon
+~ EditText upname
+- FirebaseFirestore db
+~ String mailU
+~ ImageButton i1
+- int prof
+- Dialog dialog
+# void onCreate(Bundle)
+- void iconPicker()
++ void onClick(View)
+- void checkMailExists(Finish,String,String)
+}
+
+
+interface UpdateActivity$Finish {
+~ void onReady(boolean,boolean)
+}
+
+class MainFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+- Button btn
+- boolean Logged
++ {static} MainFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class GuitarTemplate {
+- int resource
+- String name
+- String filePath
++ int getResource()
++ void setResource(int)
++ String getName()
++ String getFilePath()
++ void setFilePath(String)
++ void setName(String)
++ {static} List<GuitarTemplate> getList()
+}
+
+
+class GuitarFragment {
+- {static} String ARG_COLUMN_COUNT
+- int mColumnCount
+- RecyclerView recyclerView
++ {static} GuitarFragment newInstance(int)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class MyGuitarRecyclerViewAdapter {
+- List<GuitarTemplate> mValues
++ ViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(ViewHolder,int)
++ int getItemCount()
+}
+
+
+class MyGuitarRecyclerViewAdapter$ViewHolder {
++ ImageButton imgB
++ TextView tv
++ GuitarTemplate mItem
++ void onClick(View)
+}
+
+
+class currentUser {
+- {static} String mail
+- {static} int icon
++ {static} String getMail()
++ {static} void setMail(String)
++ {static} int getLevel()
++ {static} void setLevel(int)
++ {static} String getName()
++ {static} void setName(String)
++ {static} String getPassword()
++ {static} void setPassword(String)
++ {static} int getIcon()
++ {static} void setIcon(int)
+}
+
+
+class MainPage {
+- ViewPager viewPager
+- {static} boolean LoggedIn
+- {static} int Level
+- int levelI
+- {static} FirebaseFirestore db
+- BottomNavigationView bottomNavigation
+~ LoginModule loginModule
+~ SharedPreferences sharedPreferences
+~ String mailS
+# void onCreate(Bundle)
+- void navigateToFragment(int)
++ void setLoggedIn(boolean)
++ int getUserLevel()
++ void setUserLevel(int)
++ boolean getLoggedIn()
+}
+
+
+class LoginPage {
+- EditText edMail
+- TextView forgot
+- Button btnL
+- CheckBox rmmbr
+- boolean flag
+- FirebaseFirestore db
+# void onCreate(Bundle)
++ void onClick(View)
+}
+
+
+
+
+AppCompatActivity <|-- SignupPage
+SignupPage +.. SignupPage$Finish
+MyGameCallback <|.. AndroidLauncher
+MyGameCallback <|.. AndroidLauncher
+AndroidApplication <|-- AndroidLauncher
+PageTransformer <|.. CustomPageTransformer
+OnClickListener <|.. HomeScreen
+AppCompatActivity <|-- HomeScreen
+OnClickListener <|.. AccountFragment
+Fragment <|-- AccountFragment
+FragmentPagerAdapter <|-- MyPagerAdapter
+OnClickListener <|.. UpdateActivity
+AppCompatActivity <|-- UpdateActivity
+UpdateActivity +.. UpdateActivity$Finish
+Fragment <|-- MainFragment
+Fragment <|-- GuitarFragment
+Adapter <|-- MyGuitarRecyclerViewAdapter
+MyGuitarRecyclerViewAdapter +.. MyGuitarRecyclerViewAdapter$ViewHolder
+OnClickListener <|.. MyGuitarRecyclerViewAdapter$ViewHolder
+ViewHolder <|-- MyGuitarRecyclerViewAdapter$ViewHolder
+AppCompatActivity <|-- MainPage
+OnClickListener <|.. LoginPage
+AppCompatActivity <|-- LoginPage
+@enduml

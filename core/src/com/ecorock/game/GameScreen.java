@@ -141,7 +141,7 @@ public class GameScreen implements Screen, InputProcessor {// Main game screen c
         rootUi.setFillParent(true);
         rootUi.top();
         progressBar = new ProgressBar(0, 100, .1f, false,new Skin(Gdx.files.internal("ui/progress-ui.json"),new TextureAtlas("ui/progress-ui.atlas")));
-
+        progressBar.setName("PB");
         rootUi.add(progressBar).growX();
         rootUi.row();
         int space =45;
@@ -589,7 +589,7 @@ public class GameScreen implements Screen, InputProcessor {// Main game screen c
         }
 
         // Check if a button was touched and perform corresponding actions
-        if (hitButton != null) {
+        if (hitButton != null&&hitButton.getName()!="PB") {
             switch (hitButton.getName()) {
                 case "t1":
                     key = "1";
@@ -627,8 +627,8 @@ public class GameScreen implements Screen, InputProcessor {// Main game screen c
             }
         isDeleted=true;
         }
-      // FileHandle file2 = Gdx.files.local("test.txt");
-      // file2.writeString( key+ "," + (downT+0.2) + "-" + (upT - downT) + "\n", true);
+    //   FileHandle file2 = Gdx.files.local("test.txt");
+     //  file2.writeString( key+ "," + (downT+0.2) + "-" + (upT - downT) + "\n", true);
                 return false;
     }
 

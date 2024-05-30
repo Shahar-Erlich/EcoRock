@@ -400,14 +400,6 @@ public class SongPickingScreen implements Screen, InputProcessor {
         coord = stage.screenToStageCoordinates(new Vector2((float) screenX, (float) screenY));
         // Get the actor that was hit by the touch event
         Actor hitButton = stage.hit(coord.x, coord.y, true);
-
-       // Rectangle rectangle = new Rectangle();
-        //rectangle.setPosition(coord.x, coord.y);
-        //Rectangle hitRect = new Rectangle();
-       // if (hitButton != null) hitRect.setPosition(hitButton.getX(), hitButton.getY());
-       // hitRect.setSize(200, 200);
-       // rectangle.setSize(200, 200);
-
         // Check if the hit actor is not null
         if (hitButton != null) {
             // Check if the hit actor has a name (level button)
@@ -430,30 +422,29 @@ public class SongPickingScreen implements Screen, InputProcessor {
                 case "level 3":
                     chosenSong = Gdx.files.internal("Songs/Zelda Main Theme Song.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/TLOZ.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,3,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 4":
                     chosenSong = Gdx.files.internal("Songs/Sonic The Hedgehog OST - Green Hill Zone.mp3");
                     chosenSongBeat = Gdx.files.internal("SongBeats/GreenHillZone.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,4,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 5":
                     chosenSong = Gdx.files.internal("Songs/Super Mario Odyssey - Jump Up, Super Star!.mp3");
-                    chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
-                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
+                    chosenSongBeat = Gdx.files.internal("SongBeats/SMO.txt");
+                    gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,5,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
                 case "level 6":
                     chosenSong = Gdx.files.internal("Songs/il vento d'oro.mp3");
-                    chosenSongBeat = Gdx.files.internal("SongBeats/Littleroot.txt");
+                    chosenSongBeat = Gdx.files.internal("SongBeats/Giorno.txt");
                     gameScreen = new GameScreen(game, chosenSongBeat, chosenSong,2,numberOfLevels+1,diff);
                     game.setScreen(gameScreen);
                     break;
             }
         }
-
             // If hitButton doesn't have a name, check its parent's name (e.g., back or help button)
             else if (hitButton.getParent().getName()!=null) {
                 switch (hitButton.getParent().getName()) {

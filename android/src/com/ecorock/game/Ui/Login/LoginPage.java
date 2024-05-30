@@ -19,7 +19,6 @@ import com.ecorock.game.MainPage.AccountFragment;
 import com.ecorock.game.MainPage.MainFragment;
 import com.ecorock.game.MainPage.MainPage;
 import com.ecorock.game.R;
-import com.ecorock.game.Repository.repository;
 import com.ecorock.game.Ui.Signup.SignupPage;
 import com.ecorock.game.User;
 import com.ecorock.game.currentUser;
@@ -34,7 +33,6 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     private EditText edMail,edPass;
     private TextView forgot,signup;
     private Button btnL;
-    private repository repository;
     private CheckBox rmmbr;
     private boolean flag=false;
     private FirebaseFirestore db;
@@ -52,7 +50,6 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         rmmbr = findViewById(R.id.Rmmbrme);
         btnL.setOnClickListener(this);
         signup.setOnClickListener(this);
-        repository = new repository(this);
         rmmbr.setOnClickListener(this);
         db = FirebaseFirestore.getInstance();
     }

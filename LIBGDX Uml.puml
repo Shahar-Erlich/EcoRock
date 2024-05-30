@@ -1,0 +1,153 @@
+@startuml
+class SongPickingScreen {
+~ EcoRockGame game
+- ScrollPane scroll
+- FileHandle chosenSongBeat
+- Stage stage
+- Table LevelList
+- Skin skin
+- TextureAtlas atlas
+- Vector2 coord
+- Sound sound1
+- GameScreen gameScreen
+- Button btnBack
+- InputMultiplexer multiplexer
+- {static} MyGameCallback myGameCallback
+- {static} int numberOfLevels
+- TextButton end
+- Label TutTXT
+- String TutText
+- FileHandle fileHandle
+- Texture BGT
+- CheckBox easy
+- int diff
+- boolean helpB
++ void setMyGameCallback(MyGameCallback)
++ {static} void setNumberOfLevels(int)
++ void createList(Table)
++ void show()
++ void render(float)
++ void createTut(Stage)
++ void resize(int,int)
++ void pause()
++ void resume()
++ void hide()
++ void dispose()
++ boolean keyDown(int)
++ boolean keyUp(int)
++ boolean keyTyped(char)
++ boolean touchDown(int,int,int,int)
++ boolean touchUp(int,int,int,int)
++ boolean touchCancelled(int,int,int,int)
++ boolean touchDragged(int,int,int)
++ boolean mouseMoved(int,int)
++ boolean scrolled(float,float)
+}
+
+
+interface SongPickingScreen$MyGameCallback {
++ void goBack()
+}
+
+class beatProcessor {
+- String str
+- String[] general
+- float[] secs
+- Array<Float> longs
+- int[] pos
+- FileHandle file
++ float[] getSeconds()
++ Array<Float> getLongs()
++ int[] getPos()
+- Array<Float> findLongs(String[])
+- String[] resetArr(String[])
+- void Divide()
+- int findStart(int)
+}
+
+
+class GameScreen {
+~ EcoRockGame game
+- {static} MyGameCallback myGameCallback
+- Sound sound1
+~ Stage stage
+- Array<Rectangle> notes
+- Vector2 coord
+- boolean RUNNING
+- Button touch1
+- Texture noteT
+- Music music
+- long startTime
+- Label done
+- float[] secs
+- Array<Float> longs
+- int[] pos
+- String key
+- FileHandle file
+- int Score
+- TextureAtlas atlas
+- Skin skin
+- TextButton resume
+- {static} int notesMissed
+- Label ScoreL
+- float touchStart
+- ProgressBar progressBar
+- InputMultiplexer multiplexer
+- Array<Integer> longInd
+- Array<Texture> noteTs
+- {static} String texturePath
+- Texture tempT
+- float fadeTime
+- int levelI
++ boolean endTime
++ void setMyGameCallback(MyGameCallback)
++ {static} void changeBGT(String)
++ void show()
++ void createNotes()
++ void render(float)
++ void resize(int,int)
++ void pause()
++ void resume()
++ void hide()
++ void dispose()
+- void spawnNote(float,float,float)
+- Texture RandomTex()
+- void createPause(Stage)
+- void createEnd(Stage)
++ boolean keyDown(int)
++ boolean keyUp(int)
++ boolean keyTyped(char)
++ boolean touchDown(int,int,int,int)
++ boolean touchUp(int,int,int,int)
++ boolean touchCancelled(int,int,int,int)
++ boolean touchDragged(int,int,int)
++ boolean mouseMoved(int,int)
++ boolean scrolled(float,float)
++ void WriteLog(String)
+}
+
+
+interface GameScreen$MyGameCallback {
++ void goToMenu()
++ void levelEnd(int,int,int)
+}
+
+class EcoRockGame {
++ SpriteBatch batch
++ BitmapFont font
++ void create()
++ void render()
++ void dispose()
+}
+
+
+
+
+Screen <|.. SongPickingScreen
+InputProcessor <|.. SongPickingScreen
+SongPickingScreen +.. SongPickingScreen$MyGameCallback
+Screen <|.. GameScreen
+InputProcessor <|.. GameScreen
+GameScreen +.. GameScreen$MyGameCallback
+Game <|-- EcoRockGame
+@enduml

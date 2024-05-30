@@ -19,7 +19,6 @@ import com.ecorock.game.MainPage.UpdateActivity;
 import com.ecorock.game.R;
 import com.ecorock.game.Ui.Login.LoginPage;
 import com.ecorock.game.User;
-import com.ecorock.game.Repository.repository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +36,6 @@ import java.util.Map;
 public class SignupPage extends AppCompatActivity {
     private EditText name,email,pass;
     private Button btn;
-    private repository repository;
     private FirebaseFirestore db;
     private interface Finish{
         void onReady(boolean nameExists,boolean emailExists);
@@ -60,9 +58,8 @@ public class SignupPage extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-        // Get context and initialize repository
+        // Get context
         Context c = this;
-        repository = new repository(this);
 
         // Set onClickListener for the sign-up button
         btn.setOnClickListener(new View.OnClickListener() {
